@@ -1,6 +1,6 @@
 # Data Discovery — Relatório de cobertura
 
-Gerado em 2026-11-27T00:39:26+00:00 (UTC). Janela: 2021 até o último trimestre fechado de 2026.
+Gerado em 2026-11-27T01:11:42+00:00 (UTC). Janela: 2021 até o último trimestre fechado de 2026.
 
 Todos os números abaixo são contagens reais dos arquivos baixados nesta execução.
 

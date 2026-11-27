@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-11-27T00:39:26+00:00",
+  "gerado_em": "2026-11-27T01:11:42+00:00",
   "ano_inicial": 2021,
   "ano_final": 2026,
   "aquisicoes": [
@@ -11,7 +11,7 @@
       "bytes": 1495468,
       "sha256": "c41d6cb75175dc55fba45f8bac064467c335cfb23807754f3d6480ea69d84e49",
       "last_modified": "Thu, 26 Nov 2026 04:14:05 GMT",
-      "baixado_em": "2026-11-27T00:37:13+00:00"
+      "baixado_em": "2026-11-27T01:10:09+00:00"
     },
     {
       "fonte": "CVM DFP 2021",
@@ -21,7 +21,7 @@
       "bytes": 13283026,
       "sha256": "64b8693b709538a0357c5179ae02231cb380d0000956ee57a873a21d4efda2e4",
       "last_modified": "Sun, 28 Dec 2025 10:30:57 GMT",
-      "baixado_em": "2026-11-27T00:37:13+00:00"
+      "baixado_em": "2026-11-27T01:10:10+00:00"
     },
     {
       "fonte": "CVM DFP 2022",
@@ -31,7 +31,7 @@
       "bytes": 13449826,
       "sha256": "9eb49d92587a031b72017678630cecd438e85ac59fdb38fae62a35fe4960899d",
       "last_modified": "Sun, 22 Nov 2026 10:40:33 GMT",
-      "baixado_em": "2026-11-27T00:37:20+00:00"
+      "baixado_em": "2026-11-27T01:10:13+00:00"
     },
     {
       "fonte": "CVM DFP 2023",
@@ -41,7 +41,7 @@
       "bytes": 13563506,
       "sha256": "504b124cb4073ff9e156ffca977565f10cd62589dbf9b1a716d433cddfc6651d",
       "last_modified": "Sun, 22 Nov 2026 10:34:56 GMT",
-      "baixado_em": "2026-11-27T00:37:26+00:00"
+      "baixado_em": "2026-11-27T01:10:17+00:00"
     },
     {
       "fonte": "CVM DFP 2024",
@@ -51,7 +51,7 @@
       "bytes": 13397597,
       "sha256": "bbe832918cc3bf3bbfeea1feb1acc9126e398f8e69ada5193bf70b17a0352d2a",
       "last_modified": "Sun, 22 Nov 2026 10:28:52 GMT",
-      "baixado_em": "2026-11-27T00:37:32+00:00"
+      "baixado_em": "2026-11-27T01:10:21+00:00"
     },
     {
       "fonte": "CVM DFP 2025",
@@ -61,7 +61,7 @@
       "bytes": 12898422,
       "sha256": "d0364bf186449b89b4f91ad4fb2947dcfc6403926cbbbfc80dbc2d45b544ff6b",
       "last_modified": "Sun, 22 Nov 2026 10:22:30 GMT",
-      "baixado_em": "2026-11-27T00:37:38+00:00"
+      "baixado_em": "2026-11-27T01:10:25+00:00"
     },
     {
       "fonte": "CVM DFP 2026",
@@ -71,7 +71,7 @@
       "bytes": 243348,
       "sha256": "83fd5169daa0acc930c0a75cd49bdff1a615a66fec26d373be2be42862b6ae52",
       "last_modified": "Sun, 22 Nov 2026 10:17:02 GMT",
-      "baixado_em": "2026-11-27T00:37:43+00:00"
+      "baixado_em": "2026-11-27T01:10:29+00:00"
     },
     {
       "fonte": "CVM ITR 2021",
@@ -81,7 +81,7 @@
       "bytes": 31230595,
       "sha256": "c8723d5ccd4a6e99e9bc1566f2a558139cee1c2d96e4b940c4bcbedcb46a173a",
       "last_modified": "Sun, 28 Dec 2025 11:36:39 GMT",
-      "baixado_em": "2026-11-27T00:37:44+00:00"
+      "baixado_em": "2026-11-27T01:10:29+00:00"
     },
     {
       "fonte": "CVM ITR 2022",
@@ -91,7 +91,7 @@
       "bytes": 32329024,
       "sha256": "7c6311c2a0a832e97e089843600cf4972b4ebe9a21efddc450705547f8c74f73",
       "last_modified": "Sun, 22 Nov 2026 11:57:36 GMT",
-      "baixado_em": "2026-11-27T00:38:00+00:00"
+      "baixado_em": "2026-11-27T01:10:40+00:00"
     },
     {
       "fonte": "CVM ITR 2023",
@@ -101,7 +101,7 @@
       "bytes": 32355974,
       "sha256": "8edfee11a299f60cf9cf900f03ee4a0b263a3b64893c85d63cbc50a6665bb18b",
       "last_modified": "Sun, 22 Nov 2026 11:42:48 GMT",
-      "baixado_em": "2026-11-27T00:38:17+00:00"
+      "baixado_em": "2026-11-27T01:10:52+00:00"
     },
     {
       "fonte": "CVM ITR 2024",
@@ -111,7 +111,7 @@
       "bytes": 32725987,
       "sha256": "c2fb52cb213cf5fc09e75a47aec60fffe027e0e49ad630744861907842237189",
       "last_modified": "Sun, 22 Nov 2026 11:27:23 GMT",
-      "baixado_em": "2026-11-27T00:38:33+00:00"
+      "baixado_em": "2026-11-27T01:11:04+00:00"
     },
     {
       "fonte": "CVM ITR 2025",
@@ -121,7 +121,7 @@
       "bytes": 31724828,
       "sha256": "133fd24d15a60e19a4ada78499148370d561d8506a6daea851f292010f18a5b2",
       "last_modified": "Sun, 22 Nov 2026 11:11:34 GMT",
-      "baixado_em": "2026-11-27T00:38:50+00:00"
+      "baixado_em": "2026-11-27T01:11:15+00:00"
     },
     {
       "fonte": "CVM ITR 2026",
@@ -131,7 +131,7 @@
       "bytes": 29511192,
       "sha256": "bc09a9809f77bb66966d0ceff22dda1abde87e2f84bfdb668adc44146cf8da14",
       "last_modified": "Sun, 22 Nov 2026 10:56:43 GMT",
-      "baixado_em": "2026-11-27T00:39:07+00:00"
+      "baixado_em": "2026-11-27T01:11:26+00:00"
     }
   ],
   "cadastro": {
