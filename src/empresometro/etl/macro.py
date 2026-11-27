@@ -204,6 +204,26 @@ def gerar_relatorio_macro(conn: psycopg.Connection, eventos: list[dict] | None =
         ),
         "",
     ]
+    # Conferência cruzada: a média mensal publicada deve bater com a média da série diária.
+    conferencia = cur.execute(
+        """
+        SELECT to_char(m.data, 'YYYY-MM'), trim_scale(m.valor),
+               (SELECT round(avg(d.valor), 4) FROM serie_macro_valor d
+                WHERE d.serie_id = sd.id AND date_trunc('month', d.data) = m.data)
+        FROM serie_macro sm
+        JOIN serie_macro_valor m ON m.serie_id = sm.id
+        JOIN serie_macro sd ON sd.fonte = 'BCB SGS' AND sd.codigo = '1'
+        WHERE sm.fonte = 'BCB SGS' AND sm.codigo = '3698'
+        ORDER BY m.data DESC LIMIT 3
+        """
+    ).fetchall()
+    if conferencia:
+        partes += [
+            "## Conferência do dólar",
+            "",
+            _tabela(["Mês", "Média mensal publicada (série 3698)", "Média calculada da série diária (série 1)"], conferencia),
+            "",
+        ]
     falhas = [e for e in (eventos or []) if not e["ok"]]
     if falhas:
         partes += [
