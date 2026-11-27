@@ -4,7 +4,7 @@
 
 | Fonte | Itens processados | Segundos no total | Mediana por item (s) | Máximo (s) |
 |---|---|---|---|---|
-| FRE_PACOTE | 2 | 240 | 120.0 | 206.5 |
+| FRE_PACOTE | 2 | 247 | 123.3 | 209.6 |
 | FRE | 157 | 0 | 0.0 | 0.0 |
 
 FRE_PACOTE é o download e a leitura de um formulário inteiro; FRE são as seções extraídas dele.
