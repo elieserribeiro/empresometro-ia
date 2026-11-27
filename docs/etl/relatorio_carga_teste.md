@@ -4,8 +4,8 @@
 
 | Arquivo | Situação | Documentos | Linhas | Linhas órfãs | Segundos |
 |---|---|---|---|---|---|
-| cad_cia_aberta.csv | carregado | 676 | - | - | 0.1 |
-| itr_cia_aberta_2026.zip | carregado | 1996 | 3375356 | 0 | 46.2 |
+| cad_cia_aberta.csv | carregado | 677 | - | - | 0.1 |
+| itr_cia_aberta_2026.zip | carregado | 1996 | 3375356 | 0 | 50.0 |
 
 Linha órfã: linha de demonstração cuja companhia, data e versão não constam do índice do arquivo.
 
@@ -16,7 +16,7 @@ Tamanho total do banco: **932 MB**
 | Tabela | Linhas | Tamanho |
 |---|---|---|
 | setor | 53 | 88 kB |
-| companhia | 688 | 560 kB |
+| companhia | 689 | 560 kB |
 | companhia_mercado | 549 | 136 kB |
 | documento | 2758 | 1152 kB |
 | demonstracao_linha | 4562673 | 902 MB |
@@ -28,23 +28,23 @@ Tamanho total do banco: **932 MB**
 
 | Ativa | Companhias | Com algum documento |
 |---|---|---|
-| sim | 655 | 640 |
+| sim | 656 | 640 |
 | não | 33 | 33 |
 
 | Situação do emissor (ativas) | Companhias |
 |---|---|
-| FASE OPERACIONAL | 605 |
+| FASE OPERACIONAL | 606 |
 | EM RECUPERAÇÃO JUDICIAL OU EQUIVALENTE | 24 |
 | FASE PRÉ-OPERACIONAL | 9 |
-| LIQUIDAÇÃO EXTRAJUDICIAL | 6 |
 | EM RECUPERAÇÃO EXTRAJUDICIAL | 6 |
-| PARALISADA | 2 |
+| LIQUIDAÇÃO EXTRAJUDICIAL | 6 |
 | FALIDA | 2 |
+| PARALISADA | 2 |
 | EM LIQUIDAÇÃO JUDICIAL | 1 |
 
 | Companhias ativas por quantidade de mercados | Companhias |
 |---|---|
-| 0 | 212 |
+| 0 | 213 |
 | 1 | 354 |
 | 2 | 85 |
 | 3 | 4 |
@@ -53,7 +53,7 @@ Tamanho total do banco: **932 MB**
 |---|---|---|
 | Energia Elétrica | 2 | 105 |
 | Serviços Transporte e Logística | 2 | 104 |
-| Construção Civil, Mat. Constr. e Decoração | 2 | 57 |
+| Construção Civil, Mat. Constr. e Decoração | 2 | 58 |
 | Comércio (Atacado e Varejo) | 2 | 51 |
 | Saneamento, Serv. Água e Gás | 2 | 36 |
 | Máquinas, Equipamentos, Veículos e Peças | 2 | 27 |
