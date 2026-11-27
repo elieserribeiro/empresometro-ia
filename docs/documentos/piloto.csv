@@ -1,0 +1,21 @@
+cnpj;cd_cvm;denominacao;setor_base;plano;criterio
+01083200000118;15539;NEOENERGIA S.A;Energia Elétrica;COMUM;Maior receita do setor
+07415333000120;25003;SIMPAR S.A.;Serviços Transporte e Logística;COMUM;Maior receita do setor
+01637895000132;27189;VOTORANTIM CIMENTOS S.A.;Construção Civil, Mat. Constr. e Decoração;COMUM;Maior receita do setor
+34274233000102;24295;VIBRA ENERGIA S/A;Comércio (Atacado e Varejo);COMUM;Maior receita do setor
+43776517000180;14443;CIA SANEAMENTO BÁSICO ESTADO SÃO PAULO;Saneamento, Serv. Água e Gás;COMUM;Maior receita do setor
+07689002000189;20087;EMBRAER S.A.;Máquinas, Equipamentos, Veículos e Peças;COMUM;Maior receita do setor
+02558157000162;17671;TELEFÔNICA BRASIL S.A.;Telecomunicações;COMUM;Maior receita do setor
+60872504000123;19348;ITAÚ UNIBANCO HOLDING S.A.;Bancos;BANCO;Maior receita do setor
+02916265000160;20575;JBS SA;Alimentos;COMUM;Maior receita do setor
+33611500000119;3980;GERDAU S.A.;Metalurgia e Siderurgia;COMUM;Maior receita do setor
+06047087000139;24821;REDE D'OR SÃO LUIZ S.A.;Serviços Médicos;COMUM;Maior receita do setor
+16590234000176;22349;AZZAS 2154 S.A.;Têxtil e Vestuário;COMUM;Maior receita do setor
+53113791000122;19992;TOTVS S.A;Comunicação e Informática;COMUM;Maior receita do setor
+33000167000101;9512;PETRÓLEO BRASILEIRO S.A. - PETROBRAS;Petróleo e Gás;COMUM;Maior receita do setor
+50746577000115;19836;COSAN S.A.;Agricultura (Açúcar, Álcool e Cana);COMUM;Maior receita do setor
+00000000000191;1023;BANCO DO BRASIL S.A.;Bancos;BANCO;Segundo banco
+33376989000191;24180;IRB - BRASIL RESSEGUROS S.A.;Seguradoras e Corretoras;SEGURADORA;Maior seguradora
+33041260065290;6505;GRUPO CASAS BAHIA S.A. - EM RECUPERAÇÃO JUDICIAL;Comércio (Atacado e Varejo);COMUM;Em recuperação judicial ou extrajudicial
+47508411000156;14826;COMPANHIA BRASILEIRA DE DISTRIBUIÇÃO;Comércio (Atacado e Varejo);COMUM;Em recuperação judicial ou extrajudicial
+03378521000175;19879;LIGHT S.A. - EM RECUPERAÇÃO JUDICIAL;Energia Elétrica;COMUM;Em recuperação judicial ou extrajudicial
