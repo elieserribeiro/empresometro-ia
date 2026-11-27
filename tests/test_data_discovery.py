@@ -152,3 +152,24 @@ def test_cobertura_e_relatorio(tmp_path):
     linhas = (tmp_path / "saida.csv").read_text(encoding="utf-8").splitlines()
     assert len(linhas) == 3
     assert linhas[1].startswith("11111111000111;1023;ALFA S.A.")
+
+
+def test_diagnostico_de_modelagem(tmp_path):
+    import diagnostico_modelagem as dm
+
+    cad = dm.diagnosticar_cadastro(_criar_cadastro(tmp_path))
+    assert cad["cnpjs_ativos"] == 2
+    assert cad["cnpjs_repetidos"] == 1
+    assert cad["linhas_excedentes"] == 1
+    assert cad["grupos_totalmente_identicos"] == 1
+
+    caminho = _criar_zip(
+        tmp_path, "dfp", 2023, ["11.111.111/0001-11;2023-12-31;1;ALFA;001023;DFP;1;x;x"]
+    )
+    perfis = dm.diagnosticar_zip(caminho)
+    bpa = next(p for p in perfis if "BPA" in p["arquivo"])
+    assert bpa["linhas"] == 1
+    assert bpa["contas_distintas"] == 1
+    assert bpa["profundidade_contas"] == {1: 1}
+    texto = dm.gerar_relatorio(cad, {"2. Estrutura do DFP de 2023": perfis})
+    assert "CNPJs com mais de uma linha ativa: **1**" in texto

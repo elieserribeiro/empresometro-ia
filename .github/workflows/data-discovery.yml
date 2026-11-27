@@ -37,6 +37,9 @@ jobs:
       - name: Executar o Data Discovery
         run: python scripts/discovery/data_discovery.py --saida docs/discovery
 
+      - name: Executar o diagnóstico para a modelagem
+        run: python scripts/discovery/diagnostico_modelagem.py --saida docs/discovery
+
       - name: Mostrar o relatório no resumo da execução
         if: always()
         run: |
