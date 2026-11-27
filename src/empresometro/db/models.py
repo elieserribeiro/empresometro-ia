@@ -16,6 +16,7 @@ from decimal import Decimal
 
 from sqlalchemy import (
     BigInteger,
+    Computed,
     Boolean,
     CheckConstraint,
     Date,
@@ -33,6 +34,7 @@ from sqlalchemy import (
     func,
     text,
 )
+from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 TIPOS_DOCUMENTO = ("DFP", "ITR")
@@ -362,4 +364,64 @@ class IndicadorValor(Base):
         CheckConstraint("periodo IN ('ANUAL', '12M')", name="ck_indicador_valor_periodo"),
         CheckConstraint("(valor IS NULL) <> (motivo IS NULL)", name="ck_indicador_valor_ou_motivo"),
         Index("ix_indicador_valor_codigo_data", "codigo", "periodo", "dt_referencia"),
+    )
+
+
+class DocumentoTexto(Base):
+    """Camada Documental: cada documento (ou seção de documento) com texto extraído.
+
+    Fontes: IPE (fatos relevantes e comunicados), FRE (uma linha por seção do
+    Formulário de Referência) e PARECER (pareceres de auditoria já carregados).
+    """
+
+    __tablename__ = "documento_texto"
+
+    id: Mapped[int] = mapped_column(Integer, Identity(), primary_key=True)
+    companhia_id: Mapped[int] = mapped_column(ForeignKey("companhia.id", ondelete="CASCADE"), index=True)
+    fonte: Mapped[str] = mapped_column(String(10))
+    chave_origem: Mapped[str] = mapped_column(String(200))
+    categoria: Mapped[str | None] = mapped_column(String(120))
+    tipo: Mapped[str | None] = mapped_column(String(200))
+    secao: Mapped[str | None] = mapped_column(String(200))
+    titulo: Mapped[str] = mapped_column(Text)
+    dt_referencia: Mapped[dt.date | None] = mapped_column(Date)
+    dt_entrega: Mapped[dt.date | None] = mapped_column(Date)
+    versao: Mapped[int | None] = mapped_column(SmallInteger)
+    link: Mapped[str | None] = mapped_column(Text)
+    arquivo_sha256: Mapped[str | None] = mapped_column(String(64))
+    paginas: Mapped[int | None] = mapped_column(Integer)
+    caracteres: Mapped[int] = mapped_column(Integer, server_default=text("0"))
+    situacao: Mapped[str] = mapped_column(String(12))
+    erro: Mapped[str | None] = mapped_column(Text)
+    coletado_em: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    __table_args__ = (
+        UniqueConstraint("fonte", "chave_origem", name="uq_documento_texto_origem"),
+        CheckConstraint("fonte IN ('IPE', 'FRE', 'PARECER')", name="ck_documento_texto_fonte"),
+        CheckConstraint("situacao IN ('OK', 'SEM_TEXTO', 'ERRO')", name="ck_documento_texto_situacao"),
+        Index("ix_documento_texto_fonte_data", "fonte", "dt_referencia"),
+    )
+
+
+class Trecho(Base):
+    """Segmento de texto de um documento, com a página de origem e índice de busca textual."""
+
+    __tablename__ = "trecho"
+
+    id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True)
+    documento_texto_id: Mapped[int] = mapped_column(
+        ForeignKey("documento_texto.id", ondelete="CASCADE"), index=True
+    )
+    ordem: Mapped[int] = mapped_column(Integer)
+    pagina_inicial: Mapped[int | None] = mapped_column(Integer)
+    pagina_final: Mapped[int | None] = mapped_column(Integer)
+    texto: Mapped[str] = mapped_column(Text)
+    caracteres: Mapped[int] = mapped_column(Integer)
+    busca: Mapped[str] = mapped_column(
+        TSVECTOR, Computed("to_tsvector('portuguese', texto)", persisted=True)
+    )
+
+    __table_args__ = (
+        UniqueConstraint("documento_texto_id", "ordem", name="uq_trecho_ordem"),
+        Index("ix_trecho_busca", "busca", postgresql_using="gin"),
     )

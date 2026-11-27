@@ -1,0 +1,72 @@
+name: Documentos de teste
+
+# Valida a coleta de documentos com dados reais, em amostra pequena:
+# pareceres, alguns fatos relevantes e comunicados e dois Formulários de Referência.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/empresometro/documentos/**"
+      - ".github/workflows/documentos-teste.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: documentos-teste
+  cancel-in-progress: false
+
+jobs:
+  documentos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: empresometro
+          POSTGRES_PASSWORD: empresometro
+          POSTGRES_DB: empresometro
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U empresometro"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://empresometro:empresometro@localhost:5432/empresometro
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar o projeto e criar as tabelas
+        run: |
+          python -m pip install --quiet -e .
+          alembic upgrade head
+      - name: Carregar cadastro e pareceres do último exercício
+        run: python -m empresometro.etl carregar --tipos dfp --anos $(( $(date +%Y) - 1 )) --sem-macro --sem-qualidade --sem-indicadores
+      - name: Coletar a amostra de documentos
+        run: |
+          ANO=$(( $(date +%Y) - 1 ))
+          SAIDA=docs/documentos/teste/relatorio_coleta.md
+          python -m empresometro.documentos coletar --fontes parecer --anos $ANO --saida $SAIDA
+          python -m empresometro.documentos coletar --fontes ipe --anos $ANO --limite 60 --saida $SAIDA
+          python -m empresometro.documentos coletar --fontes fre --anos $ANO --limite 2 --saida $SAIDA
+      - name: Mostrar o relatório no resumo da execução
+        if: always()
+        run: cat docs/documentos/teste/relatorio_coleta.md >> "$GITHUB_STEP_SUMMARY" || true
+      - name: Gravar o relatório no repositório
+        run: |
+          git config user.name "Eliéser Ribeiro"
+          git config user.email "66757713+elieserribeiro@users.noreply.github.com"
+          git add docs/documentos
+          if git diff --cached --quiet; then
+            echo "Sem mudanças."
+          else
+            git commit -m "Atualiza relatório da coleta de teste"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
