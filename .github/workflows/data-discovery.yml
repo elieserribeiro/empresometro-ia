@@ -1,0 +1,58 @@
+name: Data Discovery
+
+# Roda manualmente (botão "Run workflow") e quando o script de discovery muda.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/discovery/**"
+      - ".github/workflows/data-discovery.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-discovery
+  cancel-in-progress: false
+
+jobs:
+  discovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Rodar os testes do discovery
+        run: |
+          python -m pip install --quiet pytest
+          python -m pytest tests/test_data_discovery.py -q
+
+      - name: Executar o Data Discovery
+        run: python scripts/discovery/data_discovery.py --saida docs/discovery
+
+      - name: Mostrar o relatório no resumo da execução
+        if: always()
+        run: |
+          if [ -f docs/discovery/relatorio_cobertura.md ]; then
+            cat docs/discovery/relatorio_cobertura.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Gravar o relatório no repositório
+        run: |
+          git config user.name "Eliéser Ribeiro"
+          git config user.email "66757713+elieserribeiro@users.noreply.github.com"
+          git add docs/discovery
+          if git diff --cached --quiet; then
+            echo "Sem mudanças no relatório."
+          else
+            git commit -m "Atualiza relatório de Data Discovery"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi

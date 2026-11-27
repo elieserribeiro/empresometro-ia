@@ -221,3 +221,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Empresômetro IA: dados brutos baixados (não versionados)
+data/
