@@ -21,8 +21,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Gerar o diagnóstico
-        run: python scripts/documentos/diagnostico_documentos.py --saida docs/discovery/diagnostico_documentos.md
+      - name: Sondar os downloads de documentos
+        run: |
+          python -m pip install --quiet pypdf
+          python scripts/documentos/sonda_downloads.py
       - name: Gravar o diagnóstico no repositório
         run: |
           git config user.name "Eliéser Ribeiro"
