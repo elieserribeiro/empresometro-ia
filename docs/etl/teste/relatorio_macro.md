@@ -26,3 +26,11 @@
 | BCB SGS | 21084 | Inadimplência da carteira de crédito: pessoas físicas | % | mensal | 130 | 2016-01-01 | 2026-10-01 | 6.13 |
 | IBGE SIDRA | 5932/6561/90707 | PIB: variação real contra o mesmo trimestre do ano anterior | % | trimestral | 42 | 2016-03-01 | 2026-06-01 | 2 |
 | IBGE SIDRA | 6381/4099 | Taxa de desocupação: trimestre móvel (IBGE) | % | mensal | 130 | 2016-01-01 | 2026-10-01 | 5.1 |
+
+## Conferência do dólar
+
+| Mês | Média mensal publicada (série 3698) | Média calculada da série diária (série 1) |
+|---|---|---|
+| 2026-10 | 5.1294 | 5.1294 |
+| 2026-09 | 5.1447 | 5.1447 |
+| 2026-08 | 5.1532 | 5.1532 |

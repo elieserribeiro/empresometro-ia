@@ -5,7 +5,7 @@
 | Arquivo | Situação | Documentos | Linhas | Linhas órfãs | Segundos |
 |---|---|---|---|---|---|
 | cad_cia_aberta.csv | carregado | 677 | - | - | 0.1 |
-| itr_cia_aberta_2026.zip | carregado | 1996 | 3375356 | 0 | 50.0 |
+| itr_cia_aberta_2026.zip | carregado | 1996 | 3375356 | 0 | 61.9 |
 
 Linha órfã: linha de demonstração cuja companhia, data e versão não constam do índice do arquivo.
 
@@ -36,10 +36,10 @@ Tamanho total do banco: **932 MB**
 | FASE OPERACIONAL | 606 |
 | EM RECUPERAÇÃO JUDICIAL OU EQUIVALENTE | 24 |
 | FASE PRÉ-OPERACIONAL | 9 |
-| EM RECUPERAÇÃO EXTRAJUDICIAL | 6 |
 | LIQUIDAÇÃO EXTRAJUDICIAL | 6 |
-| FALIDA | 2 |
+| EM RECUPERAÇÃO EXTRAJUDICIAL | 6 |
 | PARALISADA | 2 |
+| FALIDA | 2 |
 | EM LIQUIDAÇÃO JUDICIAL | 1 |
 
 | Companhias ativas por quantidade de mercados | Companhias |
