@@ -4,31 +4,31 @@
 
 | Arquivo | Situação | Documentos | Linhas | Linhas órfãs | Segundos |
 |---|---|---|---|---|---|
-| cad_cia_aberta.csv | carregado | 895 | - | - | 0.2 |
-| dfp_cia_aberta_2021.zip | carregado | 945 | 1231752 | 0 | 19.5 |
-| dfp_cia_aberta_2022.zip | carregado | 935 | 1246361 | 0 | 23.8 |
-| dfp_cia_aberta_2023.zip | carregado | 892 | 1276157 | 0 | 25.6 |
-| dfp_cia_aberta_2024.zip | carregado | 872 | 1235730 | 0 | 24.0 |
-| dfp_cia_aberta_2025.zip | carregado | 762 | 1187317 | 0 | 22.3 |
-| dfp_cia_aberta_2026.zip | carregado | 9 | 19832 | 0 | 0.4 |
-| itr_cia_aberta_2021.zip | carregado | 2478 | 3631362 | 0 | 69.5 |
-| itr_cia_aberta_2022.zip | carregado | 2496 | 3736638 | 0 | 72.5 |
-| itr_cia_aberta_2023.zip | carregado | 2411 | 3740350 | 0 | 77.0 |
-| itr_cia_aberta_2024.zip | carregado | 2448 | 3786457 | 0 | 80.4 |
-| itr_cia_aberta_2025.zip | carregado | 2266 | 3640347 | 0 | 79.3 |
-| itr_cia_aberta_2026.zip | carregado | 1996 | 3375356 | 0 | 71.1 |
+| cad_cia_aberta.csv | carregado | 895 | - | - | 0.1 |
+| dfp_cia_aberta_2021.zip | sem mudança | - | - | - | - |
+| dfp_cia_aberta_2022.zip | sem mudança | - | - | - | - |
+| dfp_cia_aberta_2023.zip | sem mudança | - | - | - | - |
+| dfp_cia_aberta_2024.zip | sem mudança | - | - | - | - |
+| dfp_cia_aberta_2025.zip | sem mudança | - | - | - | - |
+| dfp_cia_aberta_2026.zip | sem mudança | - | - | - | - |
+| itr_cia_aberta_2021.zip | sem mudança | - | - | - | - |
+| itr_cia_aberta_2022.zip | sem mudança | - | - | - | - |
+| itr_cia_aberta_2023.zip | sem mudança | - | - | - | - |
+| itr_cia_aberta_2024.zip | sem mudança | - | - | - | - |
+| itr_cia_aberta_2025.zip | sem mudança | - | - | - | - |
+| itr_cia_aberta_2026.zip | sem mudança | - | - | - | - |
 
 Linha órfã: linha de demonstração cuja companhia, data e versão não constam do índice do arquivo.
 
 ## Tabelas
 
-Tamanho total do banco: **5665 MB**
+Tamanho total do banco: **5666 MB**
 
 | Tabela | Linhas | Tamanho |
 |---|---|---|
-| setor | 56 | 56 kB |
-| companhia | 895 | 392 kB |
-| companhia_mercado | 638 | 96 kB |
+| setor | 56 | 88 kB |
+| companhia | 895 | 672 kB |
+| companhia_mercado | 638 | 144 kB |
 | documento | 18510 | 5928 kB |
 | demonstracao_linha | 28107659 | 5538 MB |
 | composicao_capital | 16382 | 1768 kB |
