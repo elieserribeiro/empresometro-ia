@@ -233,6 +233,9 @@ def test_ifdata_datas_e_correspondencia():
          "CnpjInstituicaoLider": None, "Situacao": "I"},
     ]
     companhias = [(1, "60872504000123"), (2, "17192451000170"), (3, "11111111000111"), (4, "22222222000122"), (5, "99999999000199")]
+    # A líder aparece depois de outra instituição do conglomerado; o nome registrado deve ser o dela.
+    cadastro = [cadastro[1], cadastro[0], *cadastro[2:]]
+    assert corresponder(companhias[:1], cadastro)[0]["nome"] == "ITAU UNIBANCO HOLDING"
     pares = {p["companhia_id"]: (p["cod_inst"], p["criterio"]) for p in corresponder(companhias, cadastro)}
     assert pares == {
         1: ("C0080099", "LIDER_DO_CONGLOMERADO"),

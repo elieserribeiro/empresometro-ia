@@ -87,7 +87,9 @@ def corresponder(companhias: list[tuple[int, str]], cadastro: list[dict]) -> lis
         lider = str(linha.get("CnpjInstituicaoLider") or "").strip().zfill(8)
         codigo = str(linha.get("CodInst") or "").strip()
         if linha.get("CodConglomeradoPrudencial") and lider.strip("0"):
-            por_lider.setdefault(lider, linha)
+            # Prefere a linha da própria instituição líder, para registrar o nome certo.
+            if lider not in por_lider or codigo.zfill(8) == lider:
+                por_lider[lider] = linha
         if codigo.isdigit():
             por_instituicao.setdefault(codigo.zfill(8), linha)
 
