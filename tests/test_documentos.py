@@ -199,3 +199,71 @@ def test_coleta_completa_com_downloads_simulados(tmp_path, monkeypatch):
     finally:
         conn.close()
         command.downgrade(cfg, "base")
+
+
+@pytest.mark.skipif(not os.environ.get("DATABASE_URL"), reason="DATABASE_URL não definida")
+def test_exportacao_e_importacao_de_embeddings(tmp_path):
+    import csv
+    import gzip
+
+    import numpy as np
+    from alembic import command
+    from alembic.config import Config
+
+    from empresometro.documentos import embeddings
+    from empresometro.documentos.armazenamento import gravar_documento
+    from empresometro.etl.fontes import conectar
+
+    cfg = Config(str(RAIZ / "alembic.ini"))
+    cfg.set_main_option("script_location", str(RAIZ / "migrations"))
+    command.downgrade(cfg, "base")
+    command.upgrade(cfg, "head")
+    conn = conectar()
+    conn.autocommit = True
+    try:
+        cia = conn.execute(
+            "INSERT INTO companhia (cnpj, denominacao, ativa) VALUES ('11111111000111', 'ALFA S.A.', true) RETURNING id"
+        ).fetchone()[0]
+        gravar_documento(
+            conn, companhia_id=cia, fonte="IPE", chave="P1:1", titulo="Fato",
+            paginas=["Texto com ponto e vírgula; aspas \"duplas\"\ne quebra de linha.", "Segunda página. " * 100],
+        )
+        ids = [l[0] for l in conn.execute("SELECT id FROM trecho ORDER BY id").fetchall()]
+        assert len(ids) >= 2
+
+        destino = tmp_path / "trechos.csv.gz"
+        assert embeddings.exportar_trechos(conn, destino) == len(ids)
+        with gzip.open(destino, "rt", encoding="utf-8", newline="") as arquivo:
+            linhas = list(csv.DictReader(arquivo, delimiter=";"))
+        assert [int(l["id"]) for l in linhas] == ids
+        assert linhas[0]["texto"].startswith('Texto com ponto e vírgula; aspas "duplas"\ne quebra')
+
+        # Vetores sintéticos; um deles é de um trecho que não existe e deve ser ignorado.
+        vetores = np.zeros((len(ids) + 1, embeddings.DIMENSOES), dtype="float16")
+        for i in range(len(ids) + 1):
+            vetores[i, i] = 1.0
+        arquivo_npz = tmp_path / "embeddings.npz"
+        np.savez(arquivo_npz, ids=np.array(ids + [999999999], dtype="int64"), embeddings=vetores)
+        assert embeddings.importar_embeddings(conn, arquivo_npz, registrar=lambda _: None) == {
+            "carregados": len(ids), "ignorados": 1,
+        }
+        assert embeddings.importar_embeddings(conn, arquivo_npz, registrar=lambda _: None)["carregados"] == len(ids)
+        assert embeddings.situacao(conn) == {"trechos": len(ids), "com_vetor": len(ids), "pendentes": 0}
+        assert embeddings.exportar_trechos(conn, destino) == 0
+
+        errado = tmp_path / "errado.npz"
+        np.savez(errado, ids=np.array([1]), embeddings=np.zeros((1, 8)))
+        with pytest.raises(ValueError):
+            embeddings.importar_embeddings(conn, errado)
+
+        # Com o pgvector real (no CI), confere o índice e a busca por similaridade.
+        if conn.execute("SELECT extversion FROM pg_extension WHERE extname = 'vector'").fetchone()[0] != "0.0":
+            embeddings.criar_indice(conn)
+            consulta = "[" + ",".join("1" if i == 1 else "0" for i in range(embeddings.DIMENSOES)) + "]"
+            mais_proximo = conn.execute(
+                "SELECT trecho_id FROM trecho_embedding ORDER BY embedding <=> %s::vector LIMIT 1", (consulta,)
+            ).fetchone()[0]
+            assert mais_proximo == ids[1]
+    finally:
+        conn.close()
+        command.downgrade(cfg, "base")

@@ -14,6 +14,7 @@ from __future__ import annotations
 import datetime as dt
 from decimal import Decimal
 
+from pgvector.sqlalchemy import Vector
 from sqlalchemy import (
     BigInteger,
     Computed,
@@ -425,3 +426,18 @@ class Trecho(Base):
         UniqueConstraint("documento_texto_id", "ordem", name="uq_trecho_ordem"),
         Index("ix_trecho_busca", "busca", postgresql_using="gin"),
     )
+
+
+DIMENSOES_EMBEDDING = 1024  # BGE-M3, vetor denso
+
+
+class TrechoEmbedding(Base):
+    """Vetor de cada trecho, gerado pelo modelo de embeddings (BGE-M3)."""
+
+    __tablename__ = "trecho_embedding"
+
+    trecho_id: Mapped[int] = mapped_column(
+        BigInteger, ForeignKey("trecho.id", ondelete="CASCADE"), primary_key=True
+    )
+    modelo: Mapped[str] = mapped_column(String(60))
+    embedding: Mapped[list[float]] = mapped_column(Vector(DIMENSOES_EMBEDDING))

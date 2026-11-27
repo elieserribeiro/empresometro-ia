@@ -107,6 +107,18 @@ docker compose run --rm --build documentos
 docker compose run --rm documentos coletar --fontes ipe --anos 2025
 ```
 
+### Embeddings
+
+Os vetores dos trechos são gerados fora do computador local, no Google Colab com GPU, pelo modelo multilíngue BGE-M3:
+
+```bash
+docker compose run --rm documentos exportar-trechos        # grava data/embeddings/trechos.csv.gz
+# rode notebooks/embeddings_colab.ipynb no Colab e baixe o embeddings.npz para data/embeddings/
+docker compose run --rm documentos importar-embeddings     # carrega os vetores e cria o índice
+```
+
+Os vetores ficam na tabela `trecho_embedding` (pgvector, 1.024 dimensões), com índice HNSW para busca por similaridade de cosseno.
+
 ## Direitos
 
 © 2026 Eliéser Ribeiro. Todos os direitos reservados.
