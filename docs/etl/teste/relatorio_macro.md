@@ -4,7 +4,7 @@
 |---|---|---|---|---|---|---|---|---|
 | BCB SGS | 432 | Taxa Selic: meta definida pelo Copom | % a.a. | diária | 3984 | 2016-01-01 | 2026-11-27 | 13.75 |
 | BCB SGS | 4189 | Taxa Selic acumulada no mês, anualizada | % a.a. | mensal | 131 | 2016-01-01 | 2026-11-01 | 13.65 |
-| BCB SGS | 4391 | CDI acumulado no mês | % a.m. | mensal | 131 | 2016-01-01 | 2026-11-01 | 0.87 |
+| BCB SGS | 4391 | CDI acumulado no mês | % a.m. | mensal | 131 | 2016-01-01 | 2026-11-01 | 0.82 |
 | BCB SGS | 433 | IPCA: variação mensal | % a.m. | mensal | 130 | 2016-01-01 | 2026-10-01 | 0.14 |
 | BCB SGS | 13522 | IPCA: acumulado em 12 meses | % em 12 meses | mensal | 130 | 2016-01-01 | 2026-10-01 | 4.63 |
 | BCB SGS | 188 | INPC: variação mensal | % a.m. | mensal | 130 | 2016-01-01 | 2026-10-01 | 0.22 |
