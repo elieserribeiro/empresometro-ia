@@ -5,7 +5,7 @@
 | Arquivo | Situação | Documentos | Linhas | Linhas órfãs | Segundos |
 |---|---|---|---|---|---|
 | cad_cia_aberta.csv | carregado | 677 | - | - | 0.1 |
-| itr_cia_aberta_2026.zip | carregado | 1996 | 3375356 | 0 | 37.3 |
+| itr_cia_aberta_2026.zip | carregado | 1996 | 3375356 | 0 | 63.0 |
 
 Linha órfã: linha de demonstração cuja companhia, data e versão não constam do índice do arquivo.
 
