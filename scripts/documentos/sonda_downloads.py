@@ -62,7 +62,7 @@ def main() -> int:
     da_cia = [l for l in linhas if (l.get("Codigo_CVM") or "").lstrip("0") == CD_CVM]
     saida += [f"IPE {ANO}: {len(da_cia)} documentos da companhia {CD_CVM}.", ""]
     for categoria in ("Fato Relevante", "Comunicado ao Mercado"):
-        escolhidos = [l for l in da_cia if (l.get("Categoria") or "").strip() == categoria][:3]
+        escolhidos = [l for l in da_cia if (l.get("Categoria") or "").strip() == categoria][:1]
         saida += [f"## {categoria}", ""]
         for l in escolhidos:
             r = obter(l.get("Link_Download") or "")
@@ -104,6 +104,25 @@ def main() -> int:
             f"  - Resposta: status {r['status']}, tipo {r['tipo']}, {r['bytes']} bytes, {r['segundos']}s, início {r['inicio']!r}",
             f"  - URL final: `{r['url_final'][:200]}`",
         ]
+        if r["inicio"].startswith(b"PK"):
+            def listar(dados: bytes, nivel: int = 0) -> None:
+                with zipfile.ZipFile(io.BytesIO(dados)) as z:
+                    for m in z.infolist()[:60]:
+                        saida.append(f"  {'  ' * nivel}- `{m.filename}` ({m.file_size} bytes)")
+                        conteudo = z.read(m) if m.file_size < 80_000_000 else b""
+                        if conteudo[:2] == b"PK" and nivel < 2:
+                            listar(conteudo, nivel + 1)
+                        elif conteudo[:4] == b"%PDF":
+                            saida.append(f"  {'  ' * (nivel + 1)}- PDF: {texto_do_pdf(conteudo)}")
+                        elif m.filename.lower().endswith((".xml", ".txt", ".htm", ".html")) and conteudo:
+                            trecho = conteudo[:700].decode("utf-8", errors="replace").replace("\n", " ")
+                            saida.append(f"  {'  ' * (nivel + 1)}- início: {trecho!r}")
+            saida.append("  - Conteúdo do pacote:")
+            try:
+                listar(r["corpo"])
+            except Exception as erro:  # noqa: BLE001
+                saida.append(f"  - falha ao abrir o pacote: {type(erro).__name__}: {erro}")
+            continue
         html = r["corpo"].decode("utf-8", errors="replace")
         titulos = re.findall(r"<title>(.*?)</title>", html, flags=re.S)[:1]
         saida += [f"  - Título da página: {titulos}"]
