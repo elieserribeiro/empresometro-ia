@@ -50,6 +50,50 @@ def texto_do_pdf(corpo: bytes) -> str:
         return f"falha ao ler PDF: {type(erro).__name__}: {erro}"
 
 
+def perfilar_xml(conteudo: bytes, saida: list) -> None:
+    """Lista os elementos do XML com texto longo e identifica PDFs embutidos em base64."""
+    import base64
+    import xml.etree.ElementTree as ET
+    from collections import Counter
+
+    quantidade: Counter = Counter()
+    tamanho: Counter = Counter()
+    exemplos: dict = {}
+    pilha: list[str] = []
+    contexto: dict = {}
+    for evento, elem in ET.iterparse(io.BytesIO(conteudo), events=("start", "end")):
+        if evento == "start":
+            pilha.append(elem.tag)
+            continue
+        caminho = "/".join(pilha[-3:])
+        texto = elem.text or ""
+        if len(texto) >= 1500:
+            quantidade[caminho] += 1
+            tamanho[caminho] += len(texto)
+            if caminho not in exemplos:
+                exemplos[caminho] = texto
+        elif texto.strip() and len(pilha) >= 2:
+            contexto.setdefault("/".join(pilha[-2:]), texto.strip()[:60])
+        pilha.pop()
+        if len(pilha) > 3:
+            elem.clear()
+    saida.append("    - Elementos com texto longo (caminho, ocorrências, caracteres):")
+    for caminho, total in tamanho.most_common(30):
+        texto = exemplos[caminho]
+        tipo = "PDF em base64" if texto.lstrip().startswith("JVBERi0") else f"texto: {texto[:120]!r}"
+        saida.append(f"      - `{caminho}`: {quantidade[caminho]} ocorrências, {total} caracteres; {tipo}")
+        if texto.lstrip().startswith("JVBERi0") and "pdf_mostrado" not in contexto:
+            contexto["pdf_mostrado"] = True
+            try:
+                saida.append(f"        - {texto_do_pdf(base64.b64decode(texto))}")
+            except Exception as erro:  # noqa: BLE001
+                saida.append(f"        - falha ao decodificar: {erro}")
+    saida.append("    - Amostra de elementos curtos (caminho => valor):")
+    for caminho, valor in list(contexto.items())[:60]:
+        if caminho != "pdf_mostrado":
+            saida.append(f"      - `{caminho}` => {valor!r}")
+
+
 def main() -> int:
     bruto = Path("data/raw/documentos")
     saida = ["# Sonda dos downloads de documentos da CVM", ""]
@@ -114,6 +158,8 @@ def main() -> int:
                             listar(conteudo, nivel + 1)
                         elif conteudo[:4] == b"%PDF":
                             saida.append(f"  {'  ' * (nivel + 1)}- PDF: {texto_do_pdf(conteudo)}")
+                        if m.filename.lower().endswith(".xml") and m.file_size > 1_000_000:
+                            perfilar_xml(conteudo, saida)
                         elif m.filename.lower().endswith((".xml", ".txt", ".htm", ".html")) and conteudo:
                             trecho = conteudo[:700].decode("utf-8", errors="replace").replace("\n", " ")
                             saida.append(f"  {'  ' * (nivel + 1)}- início: {trecho!r}")
