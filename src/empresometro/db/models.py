@@ -250,3 +250,23 @@ class SerieMacroValor(Base):
     )
     data: Mapped[dt.date] = mapped_column(Date, primary_key=True)
     valor: Mapped[Decimal | None] = mapped_column(Numeric(24, 8))
+
+
+class AlertaQualidade(Base):
+    """Sinalizações geradas pelas validações de qualidade (recriadas a cada execução)."""
+
+    __tablename__ = "alerta_qualidade"
+
+    id: Mapped[int] = mapped_column(Integer, Identity(), primary_key=True)
+    tipo: Mapped[str] = mapped_column(String(50), index=True)
+    companhia_id: Mapped[int | None] = mapped_column(
+        ForeignKey("companhia.id", ondelete="CASCADE"), index=True
+    )
+    documento_id: Mapped[int | None] = mapped_column(
+        ForeignKey("documento.id", ondelete="CASCADE"), index=True
+    )
+    detalhe: Mapped[str] = mapped_column(Text)
+    valor: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    criado_em: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )

@@ -54,21 +54,23 @@ jobs:
         run: alembic upgrade head
 
       - name: Carregar DFP do último exercício completo
-        run: python -m empresometro.etl carregar --tipos dfp --anos $(( $(date +%Y) - 1 ))
+        run: python -m empresometro.etl carregar --tipos dfp --anos $(( $(date +%Y) - 1 )) --sem-macro --sem-qualidade
 
       - name: Carregar ITR do ano corrente e gerar o relatório
         run: >
           python -m empresometro.etl carregar --tipos itr --anos $(date +%Y)
-          --usar-local --saida docs/etl/relatorio_carga_teste.md
+          --usar-local --saida docs/etl/teste/relatorio_carga_teste.md
+          && mv docs/etl/teste/relatorio_carga_teste.md docs/etl/relatorio_carga_teste.md
 
       - name: Conferir a recarga incremental
-        run: python -m empresometro.etl carregar --tipos itr --anos $(date +%Y) --usar-local
+        run: python -m empresometro.etl carregar --tipos itr --anos $(date +%Y) --usar-local --sem-macro --sem-qualidade
 
       - name: Mostrar o relatório no resumo da execução
         if: always()
         run: |
           if [ -f docs/etl/relatorio_carga_teste.md ]; then
             cat docs/etl/relatorio_carga_teste.md >> "$GITHUB_STEP_SUMMARY"
+            cat docs/etl/teste/*.md >> "$GITHUB_STEP_SUMMARY" || true
           fi
 
       - name: Gravar o relatório no repositório

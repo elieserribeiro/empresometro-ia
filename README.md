@@ -45,6 +45,7 @@ PostgreSQL 16 com a extensão pgvector, em Docker Compose. O esquema é versiona
 | `parecer` | Pareceres e declarações |
 | `carga_arquivo` | Linhagem dos arquivos baixados |
 | `serie_macro`, `serie_macro_valor` | Séries do Banco Central e do IBGE |
+| `alerta_qualidade` | Sinalizações das validações de qualidade |
 
 ### Rodar tudo pelo Docker
 
@@ -73,6 +74,8 @@ alembic upgrade head
 python -m empresometro.etl carregar
 python -m empresometro.etl relatorio --saida docs/etl/relatorio_carga.md
 ```
+
+Ao final, o comando `carregar` também traz cerca de 20 séries macroeconômicas do Banco Central e do IBGE (desde 2016) e roda as validações de qualidade, que gravam alertas na tabela `alerta_qualidade`. Os cálculos devem usar a visão `demonstracao_linha_unica`, que mostra cada conta uma única vez; a tabela `demonstracao_linha` preserva os arquivos como a CVM publicou. Relatórios gerados em `docs/etl/`: `relatorio_carga.md`, `relatorio_macro.md` e `relatorio_qualidade.md`.
 
 A carga é incremental: um arquivo que não mudou desde a última execução (mesmo hash) é pulado. Use `--forcar` para recarregar. O workflow **Carga de teste** valida o ETL com dados reais em um banco temporário e grava o resultado em `docs/etl/relatorio_carga_teste.md`.
 

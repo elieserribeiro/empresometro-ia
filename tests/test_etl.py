@@ -194,3 +194,63 @@ def test_relatorio(conn, carga):
     assert "| demonstracao_linha | 7 |" in texto
     assert "| DRE | 1 | 0 | 0 | 1 |" in texto
     assert "| 1 | 1 | 0 |" in texto
+
+
+def test_visao_sem_repeticoes(conn, carga):
+    assert _um(conn, "SELECT count(*) FROM demonstracao_linha")[0] == 7
+    assert _um(conn, "SELECT count(*) FROM demonstracao_linha_unica")[0] == 6
+    assert _um(conn, "SELECT count(*), min(sequencia) FROM demonstracao_linha_unica WHERE demonstracao = 'DRE'") == (1, 1)
+
+
+def test_alertas_de_qualidade(conn, carga):
+    from empresometro.etl.qualidade import gerar_alertas, gerar_relatorio_qualidade
+
+    contagem = gerar_alertas(conn, ano_corrente=2026)
+    # BETA é ativa e não tem DFP; ÉPSILON está fora do cadastro e seu documento não tem linhas.
+    assert contagem == {"SEM_DFP_NA_JANELA": 1, "VIGENTE_SEM_LINHAS": 1, "FORA_DO_CADASTRO": 1}
+
+    # Um passivo total diferente do ativo total passa a gerar alerta.
+    conn.execute(
+        """
+        INSERT INTO demonstracao_linha (ano_referencia, documento_id, demonstracao, escopo, ordem_exercicio,
+            dt_fim, cd_conta, ds_conta, valor_original, escala, valor_reais, sequencia)
+        SELECT 2023, d.id, 'BPP', 'CON', 'ULTIMO', '2023-12-31', '2', 'Passivo Total', 778, 'UNIDADE', 778, 99
+        FROM documento d JOIN companhia c ON c.id = d.companhia_id WHERE c.cnpj = '33333333000133'
+        """
+    )
+    contagem = gerar_alertas(conn, ano_corrente=2026)
+    assert contagem["BALANCO_NAO_FECHA"] == 1
+    valor, detalhe = _um(conn, "SELECT valor, detalhe FROM alerta_qualidade WHERE tipo = 'BALANCO_NAO_FECHA'")
+    assert valor == Decimal("-1.00")
+    assert "arredondamento" in detalhe
+    texto = gerar_relatorio_qualidade(conn)
+    assert "GAMA S.A." in texto and "| BALANCO_NAO_FECHA |" in texto
+
+
+def test_interpretacao_das_series():
+    import datetime as dt
+
+    from empresometro.etl.macro import interpretar_sgs, interpretar_sidra
+
+    assert interpretar_sgs(
+        [{"data": "02/01/2024", "valor": "11.75"}, {"data": "x", "valor": "1"}, {"data": "03/01/2024", "valor": ""}]
+    ) == [(dt.date(2024, 1, 2), Decimal("11.75"))]
+
+    cabecalho = {"NC": "Nível Territorial (Código)", "V": "Valor", "D2C": "Trimestre (Código)", "D2N": "Trimestre"}
+    trimestral = [cabecalho, {"V": "3.5", "D2C": "202402"}, {"V": "...", "D2C": "202403"}]
+    assert interpretar_sidra(trimestral, "trimestral") == [(dt.date(2024, 6, 1), Decimal("3.5"))]
+    mensal = [{"V": "Valor", "D3C": "Trimestre Móvel (Código)"}, {"V": "7,9", "D3C": "202401"}]
+    assert interpretar_sidra(mensal, "mensal") == [(dt.date(2024, 1, 1), Decimal("7.9"))]
+
+
+def test_gravacao_de_serie_e_relatorio(conn, carga):
+    import datetime as dt
+
+    from empresometro.etl.macro import gerar_relatorio_macro, gravar_serie
+
+    pontos = [(dt.date(2024, 1, 1), Decimal("11.75")), (dt.date(2024, 2, 1), Decimal("11.25"))]
+    gravar_serie(conn, "BCB SGS", "432", "Taxa Selic", "% a.a.", "diária", pontos)
+    gravar_serie(conn, "BCB SGS", "432", "Taxa Selic: meta", "% a.a.", "diária", pontos[1:])
+    assert _um(conn, "SELECT count(*) FROM serie_macro")[0] == 1
+    assert _um(conn, "SELECT count(*), max(valor) FROM serie_macro_valor") == (1, Decimal("11.25000000"))
+    assert "| BCB SGS | 432 | Taxa Selic: meta | % a.a. | diária | 1 | 2024-02-01 | 2024-02-01 | 11.25 |" in gerar_relatorio_macro(conn)
