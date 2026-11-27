@@ -43,7 +43,7 @@ jobs:
           python -m pip install --quiet -e .
           alembic upgrade head
       - name: Carregar as DFP do último exercício completo
-        run: python -m empresometro.etl carregar --tipos dfp --anos $(( $(date +%Y) - 1 )) --sem-macro --sem-qualidade
+        run: python -m empresometro.etl carregar --tipos dfp --anos $(( $(date +%Y) - 1 )) --sem-macro --sem-qualidade --sem-indicadores
       - name: Gerar o diagnóstico
         run: python scripts/diagnostico/plano_de_contas.py --saida docs/indicadores/plano_de_contas.md
       - name: Gravar o diagnóstico no repositório

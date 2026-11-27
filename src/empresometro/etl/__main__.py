@@ -5,6 +5,7 @@ Exemplos:
     python -m empresometro.etl carregar --tipos dfp --anos 2025
     python -m empresometro.etl macro
     python -m empresometro.etl qualidade
+    python -m empresometro.etl indicadores
     python -m empresometro.etl relatorio --saida docs/etl/relatorio_carga.md
 """
 
@@ -25,6 +26,8 @@ from .macro import ANO_INICIAL_PADRAO as ANO_INICIAL_MACRO
 from .macro import carregar_macro, gerar_relatorio_macro
 from .qualidade import gerar_alertas, gerar_relatorio_qualidade
 from .relatorio import gerar_relatorio
+from ..indicadores.carga import calcular_tudo
+from ..indicadores.relatorio import gerar_relatorio_indicadores
 
 ANO_INICIAL_PADRAO = 2021
 
@@ -107,6 +110,10 @@ def main(argv: list[str] | None = None) -> int:
     carregar.add_argument("--saida", type=Path, help="grava o relatório de carga neste arquivo")
     carregar.add_argument("--sem-macro", action="store_true", help="não carrega as séries macroeconômicas")
     carregar.add_argument("--sem-qualidade", action="store_true", help="não roda as validações de qualidade")
+    carregar.add_argument("--sem-indicadores", action="store_true", help="não calcula os indicadores")
+
+    indicadores = comandos.add_parser("indicadores", help="calcula os indicadores financeiros")
+    indicadores.add_argument("--saida", type=Path, default=Path("docs/indicadores/relatorio_indicadores.md"))
 
     macro = comandos.add_parser("macro", help="carrega as séries do Banco Central e do IBGE")
     macro.add_argument("--ano-inicial", type=int, default=ANO_INICIAL_MACRO)
@@ -135,8 +142,14 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Alertas: {gerar_alertas(conn)}")
         gravar(caminho, gerar_relatorio_qualidade(conn))
 
+    def rodar_indicadores(caminho: Path) -> None:
+        calcular_tudo(conn)
+        gravar(caminho, gerar_relatorio_indicadores(conn))
+
     try:
-        if args.comando == "macro":
+        if args.comando == "indicadores":
+            rodar_indicadores(args.saida)
+        elif args.comando == "macro":
             rodar_macro(args.saida, args.ano_inicial)
         elif args.comando == "qualidade":
             rodar_qualidade(args.saida)
@@ -153,6 +166,8 @@ def main(argv: list[str] | None = None) -> int:
                 rodar_macro(pasta / "relatorio_macro.md")
             if not args.sem_qualidade:
                 rodar_qualidade(pasta / "relatorio_qualidade.md")
+            if not args.sem_indicadores:
+                rodar_indicadores(pasta.parent / "indicadores" / "relatorio_indicadores.md")
     finally:
         conn.close()
     return 0

@@ -270,3 +270,96 @@ class AlertaQualidade(Base):
     criado_em: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+
+class BaseSaldo(Base):
+    """Camada Analytics: saldos padronizados do balanço por documento vigente."""
+
+    __tablename__ = "base_saldo"
+
+    documento_id: Mapped[int] = mapped_column(
+        ForeignKey("documento.id", ondelete="CASCADE"), primary_key=True
+    )
+    escopo: Mapped[str] = mapped_column(String(3), primary_key=True)
+    ordem_exercicio: Mapped[str] = mapped_column(String(10), primary_key=True)
+    dt_fim: Mapped[dt.date] = mapped_column(Date, primary_key=True)
+    ativo_total: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    ativo_circulante: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    caixa: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    aplicacoes: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    estoques: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    passivo_total: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    passivo_circulante: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    passivo_nao_circulante: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    emprestimos_cp: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    emprestimos_lp: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    patrimonio_liquido: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+
+
+class BaseFluxo(Base):
+    """Camada Analytics: resultados e fluxos padronizados por documento vigente e período."""
+
+    __tablename__ = "base_fluxo"
+
+    documento_id: Mapped[int] = mapped_column(
+        ForeignKey("documento.id", ondelete="CASCADE"), primary_key=True
+    )
+    escopo: Mapped[str] = mapped_column(String(3), primary_key=True)
+    ordem_exercicio: Mapped[str] = mapped_column(String(10), primary_key=True)
+    dt_inicio: Mapped[dt.date] = mapped_column(Date, primary_key=True)
+    dt_fim: Mapped[dt.date] = mapped_column(Date, primary_key=True)
+    plano: Mapped[str | None] = mapped_column(String(12))
+    receita: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    resultado_bruto: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    ebit: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    despesas_financeiras: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    lucro_liquido: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    depreciacao: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    fco: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    fci: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    banco_pessoal: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    banco_administrativas: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+    banco_servicos: Mapped[Decimal | None] = mapped_column(Numeric(30, 2))
+
+
+class Indicador(Base):
+    """Catálogo dos indicadores, com fórmula documentada."""
+
+    __tablename__ = "indicador"
+
+    codigo: Mapped[str] = mapped_column(String(40), primary_key=True)
+    nome: Mapped[str] = mapped_column(String(120))
+    grupo: Mapped[str] = mapped_column(String(40))
+    unidade: Mapped[str] = mapped_column(String(10))
+    formula: Mapped[str] = mapped_column(Text)
+    aplica_a: Mapped[str] = mapped_column(String(60))
+    observacao: Mapped[str | None] = mapped_column(Text)
+    ordem: Mapped[int] = mapped_column(SmallInteger)
+
+
+class IndicadorValor(Base):
+    """Valor de cada indicador por companhia e período.
+
+    Quando o indicador não pode ser calculado, `valor` fica vazio e `motivo`
+    explica: NAO_SE_APLICA, DADO_AUSENTE ou DENOMINADOR_INVALIDO.
+    """
+
+    __tablename__ = "indicador_valor"
+
+    companhia_id: Mapped[int] = mapped_column(
+        ForeignKey("companhia.id", ondelete="CASCADE"), primary_key=True
+    )
+    codigo: Mapped[str] = mapped_column(ForeignKey("indicador.codigo"), primary_key=True)
+    periodo: Mapped[str] = mapped_column(String(5), primary_key=True)
+    dt_referencia: Mapped[dt.date] = mapped_column(Date, primary_key=True)
+    valor: Mapped[Decimal | None] = mapped_column(Numeric(30, 6))
+    motivo: Mapped[str | None] = mapped_column(String(24))
+    escopo: Mapped[str] = mapped_column(String(3))
+    plano: Mapped[str] = mapped_column(String(12))
+    documento_id: Mapped[int | None] = mapped_column(ForeignKey("documento.id", ondelete="SET NULL"))
+
+    __table_args__ = (
+        CheckConstraint("periodo IN ('ANUAL', '12M')", name="ck_indicador_valor_periodo"),
+        CheckConstraint("(valor IS NULL) <> (motivo IS NULL)", name="ck_indicador_valor_ou_motivo"),
+        Index("ix_indicador_valor_codigo_data", "codigo", "periodo", "dt_referencia"),
+    )
