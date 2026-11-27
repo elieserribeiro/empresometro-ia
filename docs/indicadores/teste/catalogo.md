@@ -71,3 +71,14 @@ de companhia, dado ausente ou denominador zero ou negativo.
 | Margem de intermediação | `MARGEM_INTERMEDIACAO` | % | Resultado bruto da intermediação / receitas de intermediação financeira | banco | - |
 | Índice de eficiência | `INDICE_EFICIENCIA` | % | (Despesas de pessoal + outras despesas administrativas) / (resultado bruto da intermediação + receitas de prestação de serviços) | banco | Quanto menor, mais eficiente. Calculado pelas contas padronizadas; pode diferir do índice divulgado pelo banco. |
 | Alavancagem | `ALAVANCAGEM` | x | Ativo total / patrimônio líquido | banco | - |
+
+## Bancos: capital e crédito
+
+| Indicador | Código | Unidade | Fórmula | Aplica-se a | Observação |
+|---|---|---|---|---|---|
+| Índice de Basileia | `INDICE_BASILEIA` | % | Patrimônio de referência / ativos ponderados pelo risco (IF.data, conta 79664) | banco | Fonte: IF.data do Banco Central, conglomerado prudencial. Valor na data-base do trimestre. |
+| Índice de capital principal | `INDICE_CAPITAL_PRINCIPAL` | % | Capital principal / ativos ponderados pelo risco (IF.data, conta 79659) | banco | Fonte: IF.data do Banco Central, conglomerado prudencial. |
+| Índice de capital nível I | `INDICE_CAPITAL_NIVEL_I` | % | Patrimônio de referência nível I / ativos ponderados pelo risco (IF.data, conta 79660) | banco | Fonte: IF.data do Banco Central, conglomerado prudencial. |
+| Razão de alavancagem regulatória | `RAZAO_ALAVANCAGEM` | % | Patrimônio de referência nível I / exposição total (IF.data, conta 79661) | banco | Fonte: IF.data do Banco Central, conglomerado prudencial. |
+| Inadimplência da carteira de crédito | `INADIMPLENCIA` | % | Operações inadimplentes / total da carteira de crédito (IF.data, contas 148834 e 24454) | banco | Fonte: IF.data do Banco Central. Disponível somente a partir de março de 2025, quando o relatório passou a ser publicado. |
+| Ativos problemáticos | `ATIVOS_PROBLEMATICOS` | % | Ativos problemáticos / total da carteira de crédito (IF.data, contas 148833 e 24454) | banco | Fonte: IF.data do Banco Central. Disponível somente a partir de março de 2025. |
