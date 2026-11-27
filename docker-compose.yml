@@ -1,0 +1,23 @@
+# Infraestrutura local do Empresômetro IA.
+# Uso: copie .env.example para .env e rode `docker compose up -d`.
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: empresometro-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-empresometro}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no arquivo .env}
+      POSTGRES_DB: ${POSTGRES_DB:-empresometro}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - dados_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-empresometro} -d ${POSTGRES_DB:-empresometro}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  dados_postgres:

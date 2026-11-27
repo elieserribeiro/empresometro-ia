@@ -1,0 +1,52 @@
+name: CI
+
+# Testes automatizados a cada mudança no código.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "**.md"
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: empresometro
+          POSTGRES_PASSWORD: empresometro
+          POSTGRES_DB: empresometro
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U empresometro"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://empresometro:empresometro@localhost:5432/empresometro
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar o projeto
+        run: python -m pip install --quiet -e ".[dev]"
+
+      - name: Aplicar as migrações
+        run: alembic upgrade head
+
+      - name: Rodar os testes
+        run: python -m pytest -q

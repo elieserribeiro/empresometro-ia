@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "empresometro-ia"
+version = "0.1.0"
+description = "Plataforma de inteligência empresarial com IA generativa sobre dados públicos da CVM, BCB e IBGE."
+requires-python = ">=3.12"
+authors = [{ name = "Eliéser Ribeiro" }]
+dependencies = [
+    "sqlalchemy>=2.0",
+    "alembic>=1.13",
+    "psycopg[binary]>=3.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
