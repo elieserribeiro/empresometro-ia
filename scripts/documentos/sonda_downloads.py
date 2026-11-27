@@ -61,6 +61,12 @@ def perfilar_xml(conteudo: bytes, saida: list) -> None:
     exemplos: dict = {}
     pilha: list[str] = []
     contexto: dict = {}
+    # O arquivo declara UTF-8, mas vem em Windows-1252: converte antes de interpretar.
+    try:
+        conteudo.decode("utf-8")
+    except UnicodeDecodeError:
+        conteudo = conteudo.decode("cp1252", errors="replace").encode("utf-8")
+        saida.append("    - Codificação real: Windows-1252 (o cabeçalho declara UTF-8)")
     for evento, elem in ET.iterparse(io.BytesIO(conteudo), events=("start", "end")):
         if evento == "start":
             pilha.append(elem.tag)
