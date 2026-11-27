@@ -92,6 +92,21 @@ O módulo `src/empresometro/indicadores/` calcula 36 indicadores financeiros de 
 docker compose run --rm etl indicadores
 ```
 
+## Documentos
+
+O módulo `src/empresometro/documentos/` monta a base de textos para a busca (RAG), no piloto com 20 companhias listadas em `docs/documentos/piloto.md`:
+
+- **Fatos relevantes e comunicados ao mercado:** um PDF por documento, baixado do site da CVM.
+- **Formulário de Referência:** as seções narrativas (fatores de risco, atividades, comentários dos diretores), que vêm como PDFs embutidos no arquivo do formulário.
+- **Pareceres de auditoria:** textos já carregados pelo ETL.
+
+Cada documento é dividido em trechos com a página de origem, guardados na tabela `trecho` com busca textual em português. A coleta faz uma pausa entre as requisições e pode ser interrompida e retomada.
+
+```bash
+docker compose run --rm --build documentos
+docker compose run --rm documentos coletar --fontes ipe --anos 2025
+```
+
 ## Direitos
 
 © 2026 Eliéser Ribeiro. Todos os direitos reservados.

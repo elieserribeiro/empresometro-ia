@@ -38,5 +38,20 @@ services:
       - ./data:/app/data
       - ./docs:/app/docs
 
+  documentos:
+    # Coleta de documentos das companhias do piloto: docker compose run --rm documentos
+    build: .
+    profiles: ["documentos"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-empresometro}:${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no arquivo .env}@db:5432/${POSTGRES_DB:-empresometro}
+    volumes:
+      - ./data:/app/data
+      - ./docs:/app/docs
+    entrypoint: ["sh", "-c", "alembic upgrade head && exec python -m empresometro.documentos \"$$@\"", "--"]
+    command: ["coletar"]
+
 volumes:
   dados_postgres:
