@@ -65,7 +65,12 @@ jobs:
       - name: Carregar um ano pelo Docker Compose
         run: docker compose run --rm etl carregar --tipos dfp --anos $(( $(date +%Y) - 1 )) --saida docs/etl/relatorio_docker.md
 
+      - name: Coletar pareceres pelo serviço de documentos
+        run: docker compose run --rm documentos coletar --fontes parecer --anos $(( $(date +%Y) - 1 )) --saida docs/documentos/relatorio_docker.md
+
       - name: Conferir o relatório e o banco
         run: |
           test -s docs/etl/relatorio_docker.md
+          test -s docs/documentos/relatorio_docker.md
+          docker compose exec -T db psql -U empresometro -d empresometro -c "SELECT count(*) AS trechos FROM trecho"
           docker compose exec -T db psql -U empresometro -d empresometro -c "SELECT count(*) AS linhas FROM demonstracao_linha"
