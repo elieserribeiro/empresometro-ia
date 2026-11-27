@@ -80,7 +80,8 @@ CATALOGO: list[Definicao] = [
     Definicao("DIVIDA_LIQUIDA_PL", "Dívida líquida / patrimônio líquido", "Endividamento", "x",
               "Dívida líquida / patrimônio líquido", COMUM),
     Definicao("COBERTURA_JUROS", "Cobertura de juros", "Endividamento", "x",
-              "EBIT / despesas financeiras (DRE 3.06.02, em valor absoluto)", COMUM),
+              "EBIT / despesas financeiras (DRE 3.06.02, em valor absoluto)", COMUM,
+              "Usa as despesas financeiras brutas, que incluem variação cambial e derivativos; tende a ficar abaixo da cobertura calculada só com juros."),
     Definicao("ENDIVIDAMENTO_GERAL", "Endividamento geral", "Endividamento", "%",
               "(Passivo total - patrimônio líquido) / ativo total", TODOS),
     # Liquidez e caixa

@@ -27,7 +27,7 @@ from .macro import carregar_macro, gerar_relatorio_macro
 from .qualidade import gerar_alertas, gerar_relatorio_qualidade
 from .relatorio import gerar_relatorio
 from ..indicadores.carga import calcular_tudo
-from ..indicadores.relatorio import gerar_relatorio_indicadores
+from ..indicadores.relatorio import gerar_catalogo_markdown, gerar_relatorio_indicadores
 
 ANO_INICIAL_PADRAO = 2021
 
@@ -145,6 +145,7 @@ def main(argv: list[str] | None = None) -> int:
     def rodar_indicadores(caminho: Path) -> None:
         calcular_tudo(conn)
         gravar(caminho, gerar_relatorio_indicadores(conn))
+        gravar(caminho.parent / "catalogo.md", gerar_catalogo_markdown())
 
     try:
         if args.comando == "indicadores":

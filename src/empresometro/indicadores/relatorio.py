@@ -120,3 +120,31 @@ def gerar_relatorio_indicadores(conn: psycopg.Connection) -> str:
                 "",
             ]
     return "\n".join(partes)
+
+
+def gerar_catalogo_markdown() -> str:
+    """Documentação das fórmulas, gerada a partir do catálogo usado no cálculo."""
+    from .catalogo import CATALOGO
+
+    partes = [
+        "# Catálogo de indicadores",
+        "",
+        "Fórmulas usadas no cálculo. Os valores vêm das demonstrações padronizadas da CVM, na versão vigente de cada documento,",
+        "com o balanço consolidado quando existe e o individual nos demais casos. Em ROE, ROA e ROIC o denominador é a média",
+        "entre o saldo do fim do período e o de um ano antes. Cada indicador é calculado para o exercício anual e para os",
+        "últimos 12 meses a cada trimestre. Quando não é possível calcular, o banco registra o motivo: não se aplica ao tipo",
+        "de companhia, dado ausente ou denominador zero ou negativo.",
+        "",
+    ]
+    grupo = None
+    for d in CATALOGO:
+        if d.grupo != grupo:
+            grupo = d.grupo
+            partes += [f"## {grupo}", "", "| Indicador | Código | Unidade | Fórmula | Aplica-se a | Observação |", "|---|---|---|---|---|---|"]
+        partes.append(
+            f"| {d.nome} | `{d.codigo}` | {d.unidade} | {d.formula} | {', '.join(d.aplica_a).lower()} | {d.observacao or '-'} |"
+        )
+        proximo = CATALOGO[CATALOGO.index(d) + 1].grupo if d is not CATALOGO[-1] else None
+        if proximo != grupo:
+            partes.append("")
+    return "\n".join(partes)

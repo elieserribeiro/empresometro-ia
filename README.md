@@ -6,13 +6,13 @@ Plataforma de inteligência empresarial com IA generativa, agentes e RAG sobre d
 
 ## Situação do projeto
 
-Em construção. Etapa atual: **Fase 2 — Fundação de dados**.
+Em construção. Etapa atual: **Fase 3 — Indicadores**.
 
 | Fase | Entrega | Situação |
 |---|---|---|
 | 1 | Data Discovery: inventário de fontes, cobertura e chaves de integração | Concluída |
-| 2 | Fundação de dados: cadastro, ETL e PostgreSQL | Em andamento |
-| 3 | Indicadores financeiros | A fazer |
+| 2 | Fundação de dados: cadastro, ETL e PostgreSQL | Concluída |
+| 3 | Indicadores financeiros | Em andamento |
 | 4 | RAG piloto | A fazer |
 | 5 | Agentes e API | A fazer |
 | 6 | Generative BI | A fazer |
@@ -78,6 +78,19 @@ python -m empresometro.etl relatorio --saida docs/etl/relatorio_carga.md
 Ao final, o comando `carregar` também traz cerca de 20 séries macroeconômicas do Banco Central e do IBGE (desde 2016) e roda as validações de qualidade, que gravam alertas na tabela `alerta_qualidade`. Os cálculos devem usar a visão `demonstracao_linha_unica`, que mostra cada conta uma única vez; a tabela `demonstracao_linha` preserva os arquivos como a CVM publicou. Relatórios gerados em `docs/etl/`: `relatorio_carga.md`, `relatorio_macro.md` e `relatorio_qualidade.md`.
 
 A carga é incremental: um arquivo que não mudou desde a última execução (mesmo hash) é pulado. Use `--forcar` para recarregar. O workflow **Carga de teste** valida o ETL com dados reais em um banco temporário e grava o resultado em `docs/etl/relatorio_carga_teste.md`.
+
+## Indicadores
+
+O módulo `src/empresometro/indicadores/` calcula 36 indicadores financeiros de forma determinística, em Python e SQL, sem uso de modelo de linguagem: valores de base, rentabilidade, crescimento, endividamento, liquidez e caixa, além de indicadores próprios de bancos. As fórmulas estão em `docs/indicadores/catalogo.md`.
+
+- **Períodos:** exercício anual e últimos 12 meses a cada trimestre.
+- **Base:** balanço consolidado quando existe; individual nos demais casos.
+- **Planos de contas:** o tipo de companhia (comum, banco ou seguradora) é identificado pelas contas de cada documento.
+- **Sem valor inventado:** quando o indicador não pode ser calculado, a tabela `indicador_valor` registra o motivo.
+
+```bash
+docker compose run --rm etl indicadores
+```
 
 ## Direitos
 
