@@ -33,7 +33,7 @@ def _v(resultado, codigo):
 
 def test_catalogo_sem_codigos_repetidos():
     codigos = [d.codigo for d in CATALOGO]
-    assert len(codigos) == len(set(codigos)) == 36
+    assert len(codigos) == len(set(codigos)) == 42
     assert sum(1 for d in CATALOGO if "COMUM" in d.aplica_a) == 32
 
 
@@ -210,8 +210,101 @@ def test_calculo_completo_no_banco():
         assert valor("ROIC")[:2] == (None, "DADO_AUSENTE")  # falta o capital investido do ano anterior
         assert valor("CAGR_RECEITA")[:2] == (None, "DADO_AUSENTE")  # só um exercício próprio
         assert valor("RECEITA_LIQUIDA", "12M")[0] == D(1000000)
-        assert conn.execute("SELECT count(*) FROM indicador").fetchone()[0] == 36
+        assert conn.execute("SELECT count(*) FROM indicador").fetchone()[0] == 42
         assert "| ANUAL | COMUM | 1 |" in gerar_relatorio_indicadores(conn)
+    finally:
+        conn.close()
+        command.downgrade(cfg, "base")
+
+
+def test_ifdata_datas_e_correspondencia():
+    from empresometro.etl.ifdata import corresponder, datas_base, fim_do_mes
+
+    assert datas_base(2025, dt.date(2025, 10, 15)) == [202412, 202503, 202506, 202509]
+    assert fim_do_mes(202402) == dt.date(2024, 2, 29)
+    cadastro = [
+        {"CodInst": "60872504", "NomeInstituicao": "ITAU UNIBANCO HOLDING", "CodConglomeradoPrudencial": "C0080099",
+         "CnpjInstituicaoLider": "60872504", "Situacao": "A"},
+        {"CodInst": "17192451", "NomeInstituicao": "BANCO ITAUCARD", "CodConglomeradoPrudencial": "C0080099",
+         "CnpjInstituicaoLider": "60872504", "Situacao": "A"},
+        {"CodInst": "11111111", "NomeInstituicao": "BANCO SOZINHO", "CodConglomeradoPrudencial": None,
+         "CnpjInstituicaoLider": None, "Situacao": "A"},
+        {"CodInst": "22222222", "NomeInstituicao": "BANCO INATIVO", "CodConglomeradoPrudencial": None,
+         "CnpjInstituicaoLider": None, "Situacao": "I"},
+    ]
+    companhias = [(1, "60872504000123"), (2, "17192451000170"), (3, "11111111000111"), (4, "22222222000122"), (5, "99999999000199")]
+    pares = {p["companhia_id"]: (p["cod_inst"], p["criterio"]) for p in corresponder(companhias, cadastro)}
+    assert pares == {
+        1: ("C0080099", "LIDER_DO_CONGLOMERADO"),
+        2: ("C0080099", "INSTITUICAO_DO_CONGLOMERADO"),
+        3: ("11111111", "INSTITUICAO_INDEPENDENTE"),
+    }
+
+
+def test_indicadores_do_ifdata_nao_saem_do_calculo_da_cvm():
+    banco = calcular("BANCO", {"lucro_liquido": D(1)}, {}, {}, None)
+    assert "INDICE_BASILEIA" not in banco
+    assert calcular("COMUM", FLUXO, SALDO, SALDO_ANTERIOR, FLUXO_ANTERIOR)["INDICE_BASILEIA"] == (None, NAO_SE_APLICA)
+
+
+@pytest.mark.skipif(not os.environ.get("DATABASE_URL"), reason="DATABASE_URL não definida")
+def test_indicadores_regulatorios_no_banco():
+    from alembic import command
+    from alembic.config import Config
+
+    from empresometro.etl.fontes import conectar
+    from empresometro.etl.ifdata import gerar_relatorio_ifdata
+    from empresometro.indicadores.carga import gravar_catalogo, gravar_indicadores_ifdata
+
+    cfg = Config(str(RAIZ / "alembic.ini"))
+    cfg.set_main_option("script_location", str(RAIZ / "migrations"))
+    command.downgrade(cfg, "base")
+    command.upgrade(cfg, "head")
+    conn = conectar()
+    conn.autocommit = True
+    try:
+        gravar_catalogo(conn)
+        ids = [
+            conn.execute(
+                "INSERT INTO companhia (cnpj, denominacao, ativa) VALUES (%s, %s, true) RETURNING id", (cnpj, nome)
+            ).fetchone()[0]
+            for cnpj, nome in (("60872504000123", "BANCO COM DADOS"), ("11111111000111", "BANCO SEM DADOS"))
+        ]
+        conn.execute(
+            "INSERT INTO companhia_ifdata (companhia_id, cod_inst, nome_ifdata, criterio) "
+            "VALUES (%s, 'C0080099', 'ITAU', 'LIDER_DO_CONGLOMERADO')", (ids[0],)
+        )
+        valores = [
+            ("2024-12-31", "5", "79664", "0.165"), ("2025-06-30", "5", "79664", "0.1653"),
+            ("2025-06-30", "5", "79659", "0.1312"), ("2025-06-30", "16", "148834", "24.5"),
+            ("2025-06-30", "16", "148833", "40"), ("2025-06-30", "16", "24454", "1000"),
+        ]
+        for data, relatorio, conta, saldo in valores:
+            conn.execute(
+                "INSERT INTO ifdata_valor (cod_inst, data_base, conta, relatorio, saldo) VALUES ('C0080099', %s, %s, %s, %s)",
+                (data, conta, relatorio, saldo),
+            )
+        # O banco sem correspondência tem os demais indicadores e deve receber "dado ausente".
+        conn.execute(
+            "INSERT INTO indicador_valor (companhia_id, codigo, periodo, dt_referencia, valor, escopo, plano) "
+            "VALUES (%s, 'LUCRO_LIQUIDO', '12M', '2025-06-30', 10, 'CON', 'BANCO')", (ids[1],)
+        )
+        gravar_indicadores_ifdata(conn, ano_corrente=2026)
+
+        def valor(companhia, codigo, periodo, data):
+            return conn.execute(
+                "SELECT valor, motivo FROM indicador_valor WHERE companhia_id = %s AND codigo = %s AND periodo = %s "
+                "AND dt_referencia = %s", (companhia, codigo, periodo, data),
+            ).fetchone()
+
+        assert valor(ids[0], "INDICE_BASILEIA", "12M", "2025-06-30") == (D("16.530000"), None)
+        assert valor(ids[0], "INDICE_BASILEIA", "ANUAL", "2024-12-31") == (D("16.500000"), None)
+        assert valor(ids[0], "INDICE_BASILEIA", "ANUAL", "2025-06-30") is None  # anual só em dezembro
+        assert valor(ids[0], "INADIMPLENCIA", "12M", "2025-06-30") == (D("2.450000"), None)
+        assert valor(ids[0], "ATIVOS_PROBLEMATICOS", "12M", "2025-06-30") == (D("4.000000"), None)
+        assert valor(ids[0], "INADIMPLENCIA", "12M", "2024-12-31") is None  # relatório ainda não existia
+        assert valor(ids[1], "INDICE_BASILEIA", "12M", "2025-06-30") == (None, "DADO_AUSENTE")
+        assert "| BANCO COM DADOS | ITAU | C0080099 | LIDER_DO_CONGLOMERADO | 16.53 | 13.12 | 2.45 | 4.00 |" in gerar_relatorio_ifdata(conn)
     finally:
         conn.close()
         command.downgrade(cfg, "base")

@@ -9,7 +9,7 @@ from decimal import Decimal
 import psycopg
 
 from .calculo import DADO_AUSENTE, cagr, calcular, somar_fluxos
-from .catalogo import CATALOGO
+from .catalogo import CATALOGO, CODIGOS_IFDATA
 
 CONTAS_SALDO = ["1", "1.01", "1.01.01", "1.01.02", "1.01.04", "2", "2.01.04", "2.02.01"] + [
     f"2.{n:02d}" for n in range(1, 10)
@@ -276,6 +276,55 @@ def gravar_catalogo(conn: psycopg.Connection) -> None:
             )
 
 
+SQL_INDICADORES_IFDATA = """
+INSERT INTO indicador_valor (companhia_id, codigo, periodo, dt_referencia, valor, motivo, escopo, plano, documento_id)
+SELECT m.companhia_id, x.codigo, p.periodo, v.data_base, round(x.valor, 6), NULL, 'CON', 'BANCO', NULL
+FROM companhia_ifdata m
+JOIN (
+    SELECT cod_inst, data_base,
+           max(saldo) FILTER (WHERE conta = '79664') basileia,
+           max(saldo) FILTER (WHERE conta = '79659') principal,
+           max(saldo) FILTER (WHERE conta = '79660') nivel1,
+           max(saldo) FILTER (WHERE conta = '79661') alavancagem,
+           max(saldo) FILTER (WHERE conta = '148834') inadimplencia,
+           max(saldo) FILTER (WHERE conta = '148833') problematicos,
+           max(saldo) FILTER (WHERE conta = '24454') carteira
+    FROM ifdata_valor GROUP BY 1, 2
+) v ON v.cod_inst = m.cod_inst
+CROSS JOIN LATERAL (VALUES
+    ('INDICE_BASILEIA', v.basileia * 100),
+    ('INDICE_CAPITAL_PRINCIPAL', v.principal * 100),
+    ('INDICE_CAPITAL_NIVEL_I', v.nivel1 * 100),
+    ('RAZAO_ALAVANCAGEM', v.alavancagem * 100),
+    ('INADIMPLENCIA', v.inadimplencia / nullif(v.carteira, 0) * 100),
+    ('ATIVOS_PROBLEMATICOS', v.problematicos / nullif(v.carteira, 0) * 100)
+) x(codigo, valor)
+CROSS JOIN LATERAL (VALUES ('12M'), ('ANUAL')) p(periodo)
+WHERE x.valor IS NOT NULL
+  AND (p.periodo = '12M' OR (extract(month FROM v.data_base) = 12 AND extract(year FROM v.data_base) < %(ano)s))
+ON CONFLICT (companhia_id, codigo, periodo, dt_referencia)
+DO UPDATE SET valor = EXCLUDED.valor, motivo = NULL
+"""
+
+# Bancos sem valor no IF.data ficam com o motivo registrado, nas mesmas datas dos demais indicadores.
+SQL_IFDATA_AUSENTE = """
+INSERT INTO indicador_valor (companhia_id, codigo, periodo, dt_referencia, valor, motivo, escopo, plano, documento_id)
+SELECT v.companhia_id, i.codigo, v.periodo, v.dt_referencia, NULL, 'DADO_AUSENTE', v.escopo, v.plano, NULL
+FROM indicador_valor v JOIN indicador i ON i.codigo = ANY(%(codigos)s)
+WHERE v.codigo = 'LUCRO_LIQUIDO' AND v.plano = 'BANCO'
+ON CONFLICT (companhia_id, codigo, periodo, dt_referencia) DO NOTHING
+"""
+
+
+def gravar_indicadores_ifdata(conn: psycopg.Connection, ano_corrente: int) -> int:
+    """Grava os índices regulatórios dos bancos a partir das tabelas do IF.data."""
+    with conn.cursor() as cur:
+        cur.execute(SQL_INDICADORES_IFDATA, {"ano": ano_corrente})
+        gravados = cur.rowcount
+        cur.execute(SQL_IFDATA_AUSENTE, {"codigos": CODIGOS_IFDATA})
+    return gravados
+
+
 def calcular_tudo(conn: psycopg.Connection, ano_corrente: int | None = None, registrar=print) -> dict:
     """Recalcula todos os indicadores de todas as companhias."""
     ano_corrente = ano_corrente or dt.date.today().year
@@ -299,6 +348,7 @@ def calcular_tudo(conn: psycopg.Connection, ano_corrente: int | None = None, reg
                         valor = valor.quantize(Decimal("0.000001"))
                     copia.write_row((companhia_id, codigo, periodo, data, valor, motivo, escopo, plano, documento))
                     total += 1
-    resumo.update(companhias=len(companhias), valores=total)
+        regulatorios = gravar_indicadores_ifdata(conn, ano_corrente)
+    resumo.update(companhias=len(companhias), valores=total, valores_ifdata=regulatorios)
     registrar(f"Indicadores: {resumo}")
     return resumo

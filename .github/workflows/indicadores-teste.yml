@@ -51,7 +51,9 @@ jobs:
       - name: Carregar dois exercícios de DFP e dois anos de ITR
         run: |
           ANO=$(date +%Y)
-          python -m empresometro.etl carregar --anos $((ANO - 2)) $((ANO - 1)) $ANO --sem-macro --sem-qualidade --sem-indicadores
+          python -m empresometro.etl carregar --anos $((ANO - 2)) $((ANO - 1)) $ANO --sem-macro --sem-qualidade --sem-indicadores --sem-ifdata
+      - name: Carregar o IF.data do Banco Central
+        run: python -m empresometro.etl ifdata --saida docs/indicadores/teste/relatorio_ifdata.md
       - name: Calcular os indicadores
         run: python -m empresometro.etl indicadores --saida docs/indicadores/teste/relatorio_indicadores.md
       - name: Selecionar as companhias do piloto documental

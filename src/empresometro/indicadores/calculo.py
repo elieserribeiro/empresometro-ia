@@ -169,8 +169,9 @@ def calcular(
             continue  # calculado à parte, com todos os exercícios da companhia
         if plano not in definicao.aplica_a:
             saida[definicao.codigo] = (None, NAO_SE_APLICA)
-        else:
+        elif definicao.fonte == "CVM":
             saida[definicao.codigo] = r[definicao.codigo]
+        # Indicadores de outras fontes (IF.data) são gravados depois, direto no banco.
     return saida
 
 

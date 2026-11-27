@@ -441,3 +441,29 @@ class TrechoEmbedding(Base):
     )
     modelo: Mapped[str] = mapped_column(String(60))
     embedding: Mapped[list[float]] = mapped_column(Vector(DIMENSOES_EMBEDDING))
+
+
+class CompanhiaIfdata(Base):
+    """Correspondência entre a companhia da CVM e a instituição ou conglomerado no IF.data do Banco Central."""
+
+    __tablename__ = "companhia_ifdata"
+
+    companhia_id: Mapped[int] = mapped_column(
+        ForeignKey("companhia.id", ondelete="CASCADE"), primary_key=True
+    )
+    cod_inst: Mapped[str] = mapped_column(String(20), index=True)
+    nome_ifdata: Mapped[str | None] = mapped_column(String(200))
+    criterio: Mapped[str] = mapped_column(String(40))
+
+
+class IfdataValor(Base):
+    """Valores do IF.data (conglomerados prudenciais) para as instituições correspondidas."""
+
+    __tablename__ = "ifdata_valor"
+
+    cod_inst: Mapped[str] = mapped_column(String(20), primary_key=True)
+    data_base: Mapped[dt.date] = mapped_column(Date, primary_key=True)
+    conta: Mapped[str] = mapped_column(String(12), primary_key=True)
+    relatorio: Mapped[str] = mapped_column(String(4))
+    nome_coluna: Mapped[str | None] = mapped_column(String(200))
+    saldo: Mapped[Decimal | None] = mapped_column(Numeric(30, 10))

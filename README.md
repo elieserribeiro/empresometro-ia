@@ -81,11 +81,12 @@ A carga é incremental: um arquivo que não mudou desde a última execução (me
 
 ## Indicadores
 
-O módulo `src/empresometro/indicadores/` calcula 36 indicadores financeiros de forma determinística, em Python e SQL, sem uso de modelo de linguagem: valores de base, rentabilidade, crescimento, endividamento, liquidez e caixa, além de indicadores próprios de bancos. As fórmulas estão em `docs/indicadores/catalogo.md`.
+O módulo `src/empresometro/indicadores/` calcula 42 indicadores financeiros de forma determinística, em Python e SQL, sem uso de modelo de linguagem: valores de base, rentabilidade, crescimento, endividamento, liquidez e caixa, além de indicadores próprios de bancos. As fórmulas estão em `docs/indicadores/catalogo.md`.
 
 - **Períodos:** exercício anual e últimos 12 meses a cada trimestre.
 - **Base:** balanço consolidado quando existe; individual nos demais casos.
 - **Planos de contas:** o tipo de companhia (comum, banco ou seguradora) é identificado pelas contas de cada documento.
+- **Bancos:** índice de Basileia, índices de capital, inadimplência e ativos problemáticos vêm do IF.data do Banco Central (conglomerado prudencial), ligados às companhias da CVM pela raiz do CNPJ.
 - **Sem valor inventado:** quando o indicador não pode ser calculado, a tabela `indicador_valor` registra o motivo.
 
 ```bash

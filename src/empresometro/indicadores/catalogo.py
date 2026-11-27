@@ -26,6 +26,7 @@ class Definicao:
     formula: str
     aplica_a: tuple[str, ...]
     observacao: str | None = None
+    fonte: str = "CVM"  # "IFDATA" para os índices regulatórios do Banco Central
 
 
 CATALOGO: list[Definicao] = [
@@ -104,6 +105,27 @@ CATALOGO: list[Definicao] = [
               "(Despesas de pessoal + outras despesas administrativas) / (resultado bruto da intermediação + receitas de prestação de serviços)",
               BANCO, "Quanto menor, mais eficiente. Calculado pelas contas padronizadas; pode diferir do índice divulgado pelo banco."),
     Definicao("ALAVANCAGEM", "Alavancagem", "Bancos", "x", "Ativo total / patrimônio líquido", BANCO),
+    # Bancos: capital regulatório e qualidade do crédito (IF.data do Banco Central, conglomerado prudencial)
+    Definicao("INDICE_BASILEIA", "Índice de Basileia", "Bancos: capital e crédito", "%",
+              "Patrimônio de referência / ativos ponderados pelo risco (IF.data, conta 79664)", BANCO,
+              "Fonte: IF.data do Banco Central, conglomerado prudencial. Valor na data-base do trimestre.", "IFDATA"),
+    Definicao("INDICE_CAPITAL_PRINCIPAL", "Índice de capital principal", "Bancos: capital e crédito", "%",
+              "Capital principal / ativos ponderados pelo risco (IF.data, conta 79659)", BANCO,
+              "Fonte: IF.data do Banco Central, conglomerado prudencial.", "IFDATA"),
+    Definicao("INDICE_CAPITAL_NIVEL_I", "Índice de capital nível I", "Bancos: capital e crédito", "%",
+              "Patrimônio de referência nível I / ativos ponderados pelo risco (IF.data, conta 79660)", BANCO,
+              "Fonte: IF.data do Banco Central, conglomerado prudencial.", "IFDATA"),
+    Definicao("RAZAO_ALAVANCAGEM", "Razão de alavancagem regulatória", "Bancos: capital e crédito", "%",
+              "Patrimônio de referência nível I / exposição total (IF.data, conta 79661)", BANCO,
+              "Fonte: IF.data do Banco Central, conglomerado prudencial.", "IFDATA"),
+    Definicao("INADIMPLENCIA", "Inadimplência da carteira de crédito", "Bancos: capital e crédito", "%",
+              "Operações inadimplentes / total da carteira de crédito (IF.data, contas 148834 e 24454)", BANCO,
+              "Fonte: IF.data do Banco Central. Disponível somente a partir de março de 2025, quando o relatório passou a ser publicado.",
+              "IFDATA"),
+    Definicao("ATIVOS_PROBLEMATICOS", "Ativos problemáticos", "Bancos: capital e crédito", "%",
+              "Ativos problemáticos / total da carteira de crédito (IF.data, contas 148833 e 24454)", BANCO,
+              "Fonte: IF.data do Banco Central. Disponível somente a partir de março de 2025.", "IFDATA"),
 ]
+CODIGOS_IFDATA = [d.codigo for d in CATALOGO if d.fonte == "IFDATA"]
 
 POR_CODIGO = {d.codigo: d for d in CATALOGO}
