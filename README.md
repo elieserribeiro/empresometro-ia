@@ -46,22 +46,31 @@ PostgreSQL 16 com a extensão pgvector, em Docker Compose. O esquema é versiona
 | `carga_arquivo` | Linhagem dos arquivos baixados |
 | `serie_macro`, `serie_macro_valor` | Séries do Banco Central e do IBGE |
 
-Para subir o banco e aplicar o esquema:
+### Rodar tudo pelo Docker
+
+Com o Docker Desktop instalado, na pasta do projeto:
 
 ```bash
-cp .env.example .env          # ajuste a senha
-docker compose up -d
-pip install -e ".[dev]"
-alembic upgrade head
+copy .env.example .env        # no Windows; depois troque a senha no arquivo .env
+docker compose run --rm etl
+```
+
+O comando sobe o banco, cria as tabelas e carrega o cadastro, as DFP e os ITR de 2021 até o ano corrente. Os arquivos baixados ficam em `data/` e o relatório em `docs/etl/relatorio_carga.md`. Para carregar só uma parte:
+
+```bash
+docker compose run --rm etl carregar --tipos dfp --anos 2025
 ```
 
 ## Carga dos dados
 
-O ETL em `src/empresometro/etl/` baixa os arquivos da CVM e carrega o banco: cadastro (companhias ativas e inativas com documentos na janela), DFP e ITR com todas as contas e todas as versões, composição do capital e pareceres.
+O ETL em `src/empresometro/etl/` baixa os arquivos da CVM e carrega o banco: cadastro (companhias ativas e inativas com documentos na janela), DFP e ITR com todas as contas, o registro de todas as versões, composição do capital e pareceres.
+
+Fora do Docker, com Python 3.12:
 
 ```bash
-python -m empresometro.etl carregar                       # 2021 até o ano corrente
-python -m empresometro.etl carregar --tipos dfp --anos 2025
+pip install -e ".[dev]"
+alembic upgrade head
+python -m empresometro.etl carregar
 python -m empresometro.etl relatorio --saida docs/etl/relatorio_carga.md
 ```
 

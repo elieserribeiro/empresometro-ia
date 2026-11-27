@@ -50,3 +50,22 @@ jobs:
 
       - name: Rodar os testes
         run: python -m pytest -q
+
+  docker:
+    # Confere que a carga roda inteira pelo Docker Compose, como na máquina local.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+
+      - name: Criar o arquivo .env
+        run: cp .env.example .env
+
+      - name: Carregar um ano pelo Docker Compose
+        run: docker compose run --rm etl carregar --tipos dfp --anos $(( $(date +%Y) - 1 )) --saida docs/etl/relatorio_docker.md
+
+      - name: Conferir o relatório e o banco
+        run: |
+          test -s docs/etl/relatorio_docker.md
+          docker compose exec -T db psql -U empresometro -d empresometro -c "SELECT count(*) AS linhas FROM demonstracao_linha"

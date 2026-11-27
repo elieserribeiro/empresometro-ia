@@ -1,5 +1,10 @@
 # Infraestrutura local do Empresômetro IA.
-# Uso: copie .env.example para .env e rode `docker compose up -d`.
+#
+# 1. Copie .env.example para .env e troque a senha.
+# 2. Carga completa dos dados (sobe o banco, cria as tabelas e carrega):
+#        docker compose run --rm etl
+# 3. Só o banco:
+#        docker compose up -d db
 services:
   db:
     image: pgvector/pgvector:pg16
@@ -10,14 +15,28 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no arquivo .env}
       POSTGRES_DB: ${POSTGRES_DB:-empresometro}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      # Acessível somente a partir deste computador.
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - dados_postgres:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-empresometro} -d ${POSTGRES_DB:-empresometro}"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 20
+
+  etl:
+    build: .
+    profiles: ["etl"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-empresometro}:${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no arquivo .env}@db:5432/${POSTGRES_DB:-empresometro}
+    volumes:
+      # Arquivos baixados da CVM e relatórios ficam visíveis na pasta do projeto.
+      - ./data:/app/data
+      - ./docs:/app/docs
 
 volumes:
   dados_postgres:
