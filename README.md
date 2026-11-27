@@ -53,8 +53,19 @@ cp .env.example .env          # ajuste a senha
 docker compose up -d
 pip install -e ".[dev]"
 alembic upgrade head
-pytest
 ```
+
+## Carga dos dados
+
+O ETL em `src/empresometro/etl/` baixa os arquivos da CVM e carrega o banco: cadastro (companhias ativas e inativas com documentos na janela), DFP e ITR com todas as contas e todas as versões, composição do capital e pareceres.
+
+```bash
+python -m empresometro.etl carregar                       # 2021 até o ano corrente
+python -m empresometro.etl carregar --tipos dfp --anos 2025
+python -m empresometro.etl relatorio --saida docs/etl/relatorio_carga.md
+```
+
+A carga é incremental: um arquivo que não mudou desde a última execução (mesmo hash) é pulado. Use `--forcar` para recarregar. O workflow **Carga de teste** valida o ETL com dados reais em um banco temporário e grava o resultado em `docs/etl/relatorio_carga_teste.md`.
 
 ## Direitos
 
