@@ -22,13 +22,13 @@ Linha órfã: linha de demonstração cuja companhia, data e versão não consta
 
 ## Tabelas
 
-Tamanho total do banco: **5666 MB**
+Tamanho total do banco: **5667 MB**
 
 | Tabela | Linhas | Tamanho |
 |---|---|---|
 | setor | 56 | 88 kB |
-| companhia | 895 | 672 kB |
-| companhia_mercado | 638 | 144 kB |
+| companhia | 895 | 680 kB |
+| companhia_mercado | 638 | 152 kB |
 | documento | 18510 | 5928 kB |
 | demonstracao_linha | 28107659 | 5538 MB |
 | composicao_capital | 16382 | 1768 kB |

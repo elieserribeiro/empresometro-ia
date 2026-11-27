@@ -8,7 +8,7 @@
 | BCB SGS | 433 | IPCA: variação mensal | % a.m. | mensal | 130 | 2016-01-01 | 2026-10-01 | 0.14 |
 | BCB SGS | 13522 | IPCA: acumulado em 12 meses | % em 12 meses | mensal | 130 | 2016-01-01 | 2026-10-01 | 4.63 |
 | BCB SGS | 188 | INPC: variação mensal | % a.m. | mensal | 130 | 2016-01-01 | 2026-10-01 | 0.22 |
-| BCB SGS | 189 | IGP-M: variação mensal | % a.m. | mensal | 130 | 2016-01-01 | 2026-10-01 | 1.47 |
+| BCB SGS | 189 | IGP-M: variação mensal | % a.m. | mensal | 131 | 2016-01-01 | 2026-11-01 | 1.24 |
 | BCB SGS | 13521 | Meta para a inflação | % a.a. | anual | 11 | 2016-01-01 | 2026-01-01 | 3 |
 | BCB SGS | 1 | Dólar comercial (venda), Ptax | R$/US$ | diária | 2735 | 2016-01-04 | 2026-11-26 | 5.7446 |
 | BCB SGS | 3698 | Dólar comercial (venda), média mensal | R$/US$ | mensal | 130 | 2016-01-01 | 2026-10-01 | 5.1294 |
