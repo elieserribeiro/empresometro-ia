@@ -140,6 +140,12 @@ def main() -> int:
     for l in da_cia[-1:]:
         link = l.get("LINK_DOC") or ""
         r = obter(link)
+        for espera in (10, 30, 60):
+            if "erro" not in r and r["bytes"] > 5000:
+                break
+            saida.append(f"  - Tentativa sem sucesso: {r.get('erro') or r['corpo'][:300]!r}; aguardando {espera}s")
+            time.sleep(espera)
+            r = obter(link)
         saida += [f"- Versão {l.get('VERSAO')}, recebida em {l.get('DT_RECEB')}", f"  - Link: `{link}`"]
         if "erro" in r:
             saida += [f"  - ERRO: {r['erro']}"]
