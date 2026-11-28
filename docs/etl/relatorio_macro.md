@@ -10,15 +10,15 @@
 | BCB SGS | 188 | INPC: variação mensal | % a.m. | mensal | 130 | 2016-01-01 | 2026-10-01 | 0.22 |
 | BCB SGS | 189 | IGP-M: variação mensal | % a.m. | mensal | 131 | 2016-01-01 | 2026-11-01 | 1.24 |
 | BCB SGS | 13521 | Meta para a inflação | % a.a. | anual | 11 | 2016-01-01 | 2026-01-01 | 3 |
-| BCB SGS | 1 | Dólar comercial (venda), Ptax | R$/US$ | diária | 2735 | 2016-01-04 | 2026-11-26 | 5.7446 |
+| BCB SGS | 1 | Dólar comercial (venda), Ptax | R$/US$ | diária | 2736 | 2016-01-04 | 2026-11-27 | 5.543 |
 | BCB SGS | 3698 | Dólar comercial (venda), média mensal | R$/US$ | mensal | 130 | 2016-01-01 | 2026-10-01 | 5.1294 |
-| BCB SGS | 21619 | Euro (venda), Ptax | R$/EUR | diária | 2733 | 2016-01-04 | 2026-11-26 | 6.3041 |
+| BCB SGS | 21619 | Euro (venda), Ptax | R$/EUR | diária | 2734 | 2016-01-04 | 2026-11-27 | 6.0646 |
 | BCB SGS | 4380 | PIB mensal em valores correntes | R$ milhões | mensal | 130 | 2016-01-01 | 2026-10-01 | 1173076.4 |
 | BCB SGS | 24363 | IBC-Br: índice de atividade econômica | índice | mensal | 129 | 2016-01-01 | 2026-09-01 | 109.42914 |
 | BCB SGS | 24364 | IBC-Br com ajuste sazonal | índice | mensal | 129 | 2016-01-01 | 2026-09-01 | 109.77734 |
 | BCB SGS | 21859 | Produção industrial geral | índice | mensal | 129 | 2016-01-01 | 2026-09-01 | 109.1 |
 | BCB SGS | 1455 | Volume de vendas no varejo | índice | mensal | 129 | 2016-01-01 | 2026-09-01 | 104.45 |
-| BCB SGS | 24369 | Taxa de desocupação (PNAD Contínua) | % | mensal | 129 | 2016-01-01 | 2026-09-01 | 5.2 |
+| BCB SGS | 24369 | Taxa de desocupação (PNAD Contínua) | % | mensal | 130 | 2016-01-01 | 2026-10-01 | 5.1 |
 | BCB SGS | 20539 | Saldo da carteira de crédito total | R$ milhões | mensal | 130 | 2016-01-01 | 2026-10-01 | 7466155 |
 | BCB SGS | 20714 | Taxa média de juros das operações de crédito | % a.a. | mensal | 130 | 2016-01-01 | 2026-10-01 | 32.93 |
 | BCB SGS | 21082 | Inadimplência da carteira de crédito total | % | mensal | 130 | 2016-01-01 | 2026-10-01 | 5.1 |

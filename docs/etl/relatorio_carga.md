@@ -4,7 +4,7 @@
 
 | Arquivo | Situação | Documentos | Linhas | Linhas órfãs | Segundos |
 |---|---|---|---|---|---|
-| cad_cia_aberta.csv | carregado | 895 | - | - | 0.1 |
+| cad_cia_aberta.csv | carregado | 895 | - | - | 0.2 |
 | dfp_cia_aberta_2021.zip | sem mudança | - | - | - | - |
 | dfp_cia_aberta_2022.zip | sem mudança | - | - | - | - |
 | dfp_cia_aberta_2023.zip | sem mudança | - | - | - | - |
@@ -22,11 +22,11 @@ Linha órfã: linha de demonstração cuja companhia, data e versão não consta
 
 ## Tabelas
 
-Tamanho total do banco: **5667 MB**
+Tamanho total do banco: **5803 MB**
 
 | Tabela | Linhas | Tamanho |
 |---|---|---|
-| setor | 56 | 88 kB |
+| setor | 56 | 96 kB |
 | companhia | 895 | 680 kB |
 | companhia_mercado | 638 | 152 kB |
 | documento | 18510 | 5928 kB |

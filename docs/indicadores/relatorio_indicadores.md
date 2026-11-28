@@ -4,20 +4,20 @@
 
 | Período | Plano | Companhias | Datas | Valores calculados | Não se aplica | Dado ausente | Denominador inválido |
 |---|---|---|---|---|---|---|---|
-| 12M | BANCO | 51 | 23 | 10264 | 14820 | 610 | 241 |
-| 12M | COMUM | 817 | 44 | 441261 | 61848 | 14729 | 23332 |
-| 12M | SEGURADORA | 2 | 15 | 430 | 459 | 0 | 56 |
-| ANUAL | BANCO | 45 | 6 | 2436 | 3320 | 24 | 73 |
-| ANUAL | COMUM | 813 | 23 | 101106 | 13748 | 290 | 5961 |
-| ANUAL | SEGURADORA | 2 | 3 | 95 | 102 | 0 | 15 |
+| 12M | BANCO | 54 | 24 | 13775 | 14820 | 2489 | 241 |
+| 12M | COMUM | 817 | 44 | 441329 | 154552 | 14729 | 23332 |
+| 12M | SEGURADORA | 2 | 15 | 430 | 621 | 0 | 56 |
+| ANUAL | BANCO | 48 | 7 | 3318 | 3320 | 446 | 73 |
+| ANUAL | COMUM | 813 | 23 | 101117 | 34359 | 290 | 5961 |
+| ANUAL | SEGURADORA | 2 | 3 | 95 | 138 | 0 | 15 |
 
 ## Base usada
 
 | Período | Escopo | Companhias |
 |---|---|---|
-| 12M | CON | 543 |
+| 12M | CON | 556 |
 | 12M | IND | 382 |
-| ANUAL | CON | 538 |
+| ANUAL | CON | 552 |
 | ANUAL | IND | 352 |
 
 ## Indicadores por situação (último exercício anual)
@@ -60,6 +60,12 @@
 | Bancos | Margem de intermediação | % | 25 | 637 | 0 | 0 | 33.20 |
 | Bancos | Índice de eficiência | % | 25 | 637 | 0 | 0 | 45.47 |
 | Bancos | Alavancagem | x | 25 | 637 | 0 | 0 | 10.45 |
+| Bancos: capital e crédito | Índice de Basileia | % | 35 | 636 | 2 | 0 | 15.36 |
+| Bancos: capital e crédito | Índice de capital principal | % | 34 | 637 | 2 | 0 | 11.54 |
+| Bancos: capital e crédito | Índice de capital nível I | % | 34 | 637 | 2 | 0 | 13.21 |
+| Bancos: capital e crédito | Razão de alavancagem regulatória | % | 33 | 637 | 2 | 0 | 7.41 |
+| Bancos: capital e crédito | Inadimplência da carteira de crédito | % | 34 | 637 | 3 | 0 | 3.73 |
+| Bancos: capital e crédito | Ativos problemáticos | % | 34 | 637 | 3 | 0 | 6.16 |
 
 ## Medianas por exercício (plano comum)
 
